@@ -4,6 +4,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from decimal import Decimal
+
+from shared.http import response
 from shared.validation import ValidationError, validate_incident_payload, validate_status
 
 
@@ -49,6 +52,10 @@ class IncidentValidationTests(unittest.TestCase):
     def test_rejects_unknown_status(self):
         with self.assertRaises(ValidationError):
             validate_status({"status": "Escalated"})
+
+    def test_serializes_dynamodb_numbers_as_json_numbers(self):
+        result = response(200, {"updates": Decimal("1")})
+        self.assertEqual(result["body"], '{"updates": 1}')
 
 
 if __name__ == "__main__":

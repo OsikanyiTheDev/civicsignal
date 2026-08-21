@@ -34,6 +34,45 @@ export const categoryMeta: Record<IncidentCategory, { emoji: string; accent: str
   Other: { emoji: "📍", accent: "violet" },
 };
 
+export type ApiIncident = {
+  id: string;
+  title: string;
+  category: IncidentCategory;
+  status: IncidentStatus;
+  area: string;
+  summary: string;
+  urgency: Incident["urgency"];
+  updates?: number | string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export function incidentFromApi(incident: ApiIncident): Incident {
+  const reportedAt = incident.updated_at || incident.created_at;
+  const formattedTime = reportedAt
+    ? new Intl.DateTimeFormat("en", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "UTC",
+      }).format(new Date(reportedAt))
+    : "Recently updated";
+
+  return {
+    id: incident.id,
+    title: incident.title,
+    category: incident.category,
+    status: incident.status,
+    area: incident.area,
+    summary: incident.summary,
+    urgency: incident.urgency,
+    updates: Number(incident.updates ?? 1),
+    emoji: categoryMeta[incident.category]?.emoji ?? "📍",
+    reportedAt: `${formattedTime} · AWS`,
+  };
+}
+
 export const demoIncidents: Incident[] = [
   {
     id: "CS-1042",

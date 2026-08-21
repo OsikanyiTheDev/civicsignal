@@ -1,13 +1,15 @@
 "use client";
 
 import { ArrowUpRight, CheckCheck, Filter, MessageCircleMore, Search, SlidersHorizontal } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   categoryMeta,
   demoIncidents,
   incidentCategories,
+  incidentFromApi,
   incidentStatuses,
+  type ApiIncident,
   type Incident,
   type IncidentCategory,
   type IncidentStatus,
@@ -18,10 +20,36 @@ const allCategories = "All categories" as const;
 const allStatuses = "All statuses" as const;
 
 export function LiveSignalBoard() {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_CIVICSIGNAL_API_URL?.replace(/\/$/, "");
   const [incidents, setIncidents] = useState<Incident[]>(demoIncidents);
   const [category, setCategory] = useState<IncidentCategory | typeof allCategories>(allCategories);
   const [status, setStatus] = useState<IncidentStatus | typeof allStatuses>(allStatuses);
   const [search, setSearch] = useState("");
+  const [boardMode, setBoardMode] = useState<"demo" | "loading" | "aws" | "fallback">(apiBaseUrl ? "loading" : "demo");
+
+  useEffect(() => {
+    if (!apiBaseUrl) return;
+
+    const controller = new AbortController();
+    async function loadAwsBoard() {
+      try {
+        const response = await fetch(`${apiBaseUrl}/incidents`, { signal: controller.signal });
+        const data = await response.json() as { incidents?: ApiIncident[] };
+        if (!response.ok || !Array.isArray(data.incidents)) {
+          throw new Error("The API response was not usable.");
+        }
+        setIncidents(data.incidents.map(incidentFromApi));
+        setBoardMode("aws");
+      } catch (error) {
+        if ((error as Error).name !== "AbortError") {
+          setBoardMode("fallback");
+        }
+      }
+    }
+
+    void loadAwsBoard();
+    return () => controller.abort();
+  }, [apiBaseUrl]);
 
   const visibleIncidents = useMemo(() => {
     const query = search.trim().toLocaleLowerCase();
@@ -61,7 +89,10 @@ export function LiveSignalBoard() {
             <label className="signal-select"><SlidersHorizontal size={16} /><span className="sr-only">Filter by status</span><select value={status} onChange={(event) => setStatus(event.target.value as IncidentStatus | typeof allStatuses)}><option>{allStatuses}</option>{incidentStatuses.map((item) => <option key={item}>{item}</option>)}</select></label>
           </div>
 
-          <div className="signal-board-title-row"><span>Showing {visibleIncidents.length} signal{visibleIncidents.length === 1 ? "" : "s"}</span><span>Public demo data · no live incident feed</span></div>
+          <div className="signal-board-title-row">
+            <span>Showing {visibleIncidents.length} signal{visibleIncidents.length === 1 ? "" : "s"}</span>
+            <span>{boardMode === "aws" ? "☁️ Live AWS development data" : boardMode === "loading" ? "Connecting to AWS API…" : boardMode === "fallback" ? "⚠️ API unavailable · demo data shown" : "Public demo data · no live incident feed"}</span>
+          </div>
           <div className="signal-list">
             {visibleIncidents.map((incident) => {
               const meta = categoryMeta[incident.category];
@@ -87,7 +118,10 @@ export function LiveSignalBoard() {
         </div>
 
         <aside className="signal-report-panel" id="report">
-          <ReportIssueForm onIncidentCreated={(incident) => setIncidents((current) => [incident, ...current])} />
+          <ReportIssueForm apiBaseUrl={apiBaseUrl} onIncidentCreated={(incident) => {
+            setIncidents((current) => [incident, ...current]);
+            if (apiBaseUrl) setBoardMode("aws");
+          }} />
           <div className="report-panel-footer"><MessageCircleMore size={16} /><span>Public reports enter a moderation path before any official response is displayed.</span></div>
         </aside>
       </div>

@@ -244,6 +244,7 @@ section[id] { scroll-margin-top: 84px; }
 .upload-placeholder svg { color: var(--teal); }
 .privacy-guidance { display: flex; margin: 4px 0 14px; align-items: flex-start; gap: 6px; color: var(--ink-faint); font-size: 0.62rem; line-height: 1.46; }
 .privacy-guidance svg { flex: 0 0 auto; margin-top: 2px; color: var(--orange); }
+.report-error { margin: 2px 0 12px; padding: 8px 9px; border-left: 2px solid var(--orange); color: #82391f; background: var(--orange-soft); font-size: 0.66rem; line-height: 1.45; }
 .report-submit { width: 100%; min-height: 42px; font-size: 0.76rem; }
 .report-submit:disabled { opacity: 0.65; cursor: wait; }
 .report-panel-footer { display: flex; padding: 11px 15px; align-items: flex-start; gap: 7px; border-top: 1px solid var(--line); color: var(--ink-faint); background: var(--surface-green); font-size: 0.61rem; line-height: 1.45; }

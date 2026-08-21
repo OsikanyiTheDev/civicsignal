@@ -1,7 +1,15 @@
 import json
+from decimal import Decimal
 from typing import Any
 
 ALLOWED_ORIGIN = "*"  # API Gateway CORS is the primary origin control for this MVP.
+
+
+def json_default(value: Any) -> Any:
+    """Serialize DynamoDB Decimal values as JSON numbers, not strings."""
+    if isinstance(value, Decimal):
+        return int(value) if value % 1 == 0 else float(value)
+    raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")
 
 
 def response(status_code: int, body: dict[str, Any]) -> dict[str, Any]:
@@ -14,7 +22,7 @@ def response(status_code: int, body: dict[str, Any]) -> dict[str, Any]:
             "access-control-allow-headers": "content-type,authorization",
             "access-control-allow-methods": "GET,POST,PATCH,OPTIONS",
         },
-        "body": json.dumps(body, default=str),
+        "body": json.dumps(body, default=json_default),
     }
 
 
