@@ -32,7 +32,26 @@ Before deployment, choose:
 - The exact Vercel frontend URL for `allowed_origins`
 - A remote Terraform state bucket that is encrypted, versioned, and private
 
-Copy the sample configuration:
+### Bootstrap remote state first
+
+If you are not intentionally reusing an existing Terraform state bucket, create a dedicated CivicSignal state bucket first:
+
+```bash
+cd terraform/bootstrap
+cp terraform.tfvars.example terraform.tfvars
+# Edit state_bucket_name with a globally unique value.
+terraform init
+terraform plan
+terraform apply
+```
+
+Then copy the output bucket name into `terraform/environments/dev/backend.tf` using the supplied `backend.tf.example` as a guide. The main environment uses S3 native lockfiles, encryption, versioning, and blocked public access.
+
+### Configure a small development cost guardrail
+
+The development Terraform environment includes an optional AWS Budget. When `alert_email` is set, it creates a monthly guardrail with alerts at 50% actual spend and 100% forecasted spend. The sample is set to **$5 USD** and can be changed before apply.
+
+Copy the main environment sample configuration:
 
 ```bash
 cd terraform/environments/dev

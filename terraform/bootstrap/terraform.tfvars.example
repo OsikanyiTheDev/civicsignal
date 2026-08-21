@@ -1,0 +1,2 @@
+# Pick a globally unique name. Do not reuse a state bucket unless you intend to.
+state_bucket_name = "replace-with-unique-civicsignal-terraform-state-bucket"

@@ -40,3 +40,10 @@ module "observability" {
   operations_topic_arn  = module.notifications.operations_topic_arn
   tags                  = local.common_tags
 }
+
+module "cost_control" {
+  source             = "../../modules/cost_control"
+  name_prefix        = local.name_prefix
+  monthly_budget_usd = var.monthly_budget_usd
+  alert_email        = var.alert_email
+}

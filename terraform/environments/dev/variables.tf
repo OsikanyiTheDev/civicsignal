@@ -32,3 +32,9 @@ variable "alert_email" {
   description = "Optional operational alerts email. Confirm the SNS subscription after deployment."
   default     = ""
 }
+
+variable "monthly_budget_usd" {
+  type        = number
+  description = "Monthly AWS cost guardrail. A $5 default is used for a low-traffic development environment."
+  default     = 5
+}
