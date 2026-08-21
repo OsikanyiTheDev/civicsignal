@@ -1,0 +1,11 @@
+# Choose a globally unique name before deploying.
+evidence_bucket_name = "replace-with-unique-civicsignal-evidence-bucket"
+
+# Add the production frontend after Vercel deployment.
+allowed_origins = [
+  "http://localhost:3000",
+  "https://your-civicsignal-frontend.vercel.app"
+]
+
+# Optional: receives SNS confirmations and operational notifications.
+# alert_email = "you@example.com"
