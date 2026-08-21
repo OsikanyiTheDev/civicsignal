@@ -51,13 +51,13 @@ variable "log_retention_days" {
 
 variable "throttling_burst_limit" {
   type        = number
-  description = "API Gateway HTTP API burst throttle." 
+  description = "API Gateway HTTP API burst throttle."
   default     = 20
 }
 
 variable "throttling_rate_limit" {
   type        = number
-  description = "API Gateway HTTP API steady-state requests per second." 
+  description = "API Gateway HTTP API steady-state requests per second."
   default     = 10
 }
 
