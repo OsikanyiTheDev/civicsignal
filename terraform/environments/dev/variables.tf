@@ -35,6 +35,6 @@ variable "alert_email" {
 
 variable "monthly_budget_usd" {
   type        = number
-  description = "Monthly AWS cost guardrail. A $5 default is used for a low-traffic development environment."
-  default     = 5
+  description = "Monthly AWS cost guardrail. A $10 default is used for the CivicSignal development environment."
+  default     = 10
 }

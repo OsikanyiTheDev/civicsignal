@@ -9,4 +9,4 @@ allowed_origins = [
 
 # Receives SNS confirmations, operational notifications, and the cost guardrail.
 alert_email = "jillskillion@gmail.com"
-monthly_budget_usd = 5
+monthly_budget_usd = 10

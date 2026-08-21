@@ -36,7 +36,7 @@ It is intentionally designed as a **community coordination prototype**, not as a
 - Python 3.12 Lambda handlers for health, create, list, get, status-update and constrained upload-presign operations
 - EventBridge event routing for submitted incidents
 - SNS operations topic and CloudWatch alarms
-- Optional $5/month AWS Budget guardrail with email notifications
+- Optional $10/month AWS Budget guardrail with email notifications
 - HTTP API throttling and AWS IAM protection for moderation-only routes
 - Unit tests for public payload and status validation
 
@@ -110,7 +110,7 @@ terraform validate
 terraform plan
 ```
 
-Do not deploy until you have reviewed [docs/SECURITY.md](docs/SECURITY.md) and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+Do not deploy until you have reviewed [docs/SECURITY.md](docs/SECURITY.md) and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). If you will deploy from your own computer with configured AWS credentials, follow [docs/LOCAL_AWS_DEPLOYMENT.md](docs/LOCAL_AWS_DEPLOYMENT.md).
 
 ## Safety commitments
 

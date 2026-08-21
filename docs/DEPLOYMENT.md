@@ -49,7 +49,7 @@ Then copy the output bucket name into `terraform/environments/dev/backend.tf` us
 
 ### Configure a small development cost guardrail
 
-The development Terraform environment includes an optional AWS Budget. When `alert_email` is set, it creates a monthly guardrail with alerts at 50% actual spend and 100% forecasted spend. The sample is set to **$5 USD** and can be changed before apply.
+The development Terraform environment includes an optional AWS Budget. When `alert_email` is set, it creates a monthly guardrail with alerts at 50% actual spend and 100% forecasted spend. The sample is set to **$10 USD** and can be changed before apply.
 
 Copy the main environment sample configuration:
 
