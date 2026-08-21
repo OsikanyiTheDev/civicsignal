@@ -1,0 +1,32 @@
+# Dependencies and framework output
+/node_modules
+/.next
+/out
+/build
+/coverage
+
+# Local configuration and secrets
+.env*
+!.env.example
+*.tfvars
+*.tfvars.json
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfplan
+
+# Lambda build artifacts
+lambda/dist/
+*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# OS and editor files
+.DS_Store
+.vscode/
+*.swp
+*.tsbuildinfo
