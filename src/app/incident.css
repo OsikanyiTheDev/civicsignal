@@ -36,6 +36,7 @@
 .incident-map-link { display: inline-flex; align-items: center; gap: 6px; color: var(--teal); font-size: 0.71rem; font-weight: 780; }
 .incident-evidence-card { background: linear-gradient(145deg, rgba(112,67,172,0.08), var(--surface)); }
 .incident-evidence-card > span { display: inline-flex; padding: 6px 8px; border-radius: 5px; color: var(--violet); background: var(--violet-soft); font-size: 0.62rem; }
+.approved-evidence-image { width: 100%; height: auto; max-height: 300px; margin-bottom: 12px; object-fit: cover; border: 1px solid var(--line); border-radius: 10px 4px 10px 4px; background: var(--canvas); }
 .incident-loading, .incident-empty { display: grid; min-height: 55vh; place-items: center; align-content: center; gap: 11px; text-align: center; }
 .incident-loading { color: var(--teal); font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.76rem; }
 .incident-empty h1 { margin: 0; font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif; font-size: 2rem; }

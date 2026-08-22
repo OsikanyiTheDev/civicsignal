@@ -1,11 +1,13 @@
 "use client";
 
-import { LogIn, LogOut, UserRoundCheck } from "lucide-react";
+import { ClipboardCheck, LogIn, LogOut, UserRoundCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 
 type AuthState = {
   available: boolean;
   authenticated: boolean;
+  email?: string | null;
+  groups?: string[];
 };
 
 export function AuthControl() {
@@ -23,7 +25,13 @@ export function AuthControl() {
   }
 
   if (auth.authenticated) {
-    return <a className="auth-control auth-control-signed-in" href="/api/auth/logout"><UserRoundCheck size={15} /> Signed in · Sign out <LogOut size={14} /></a>;
+    const canModerate = auth.groups?.some((group) => ["Moderator", "Administrator", "Responder"].includes(group));
+    return (
+      <>
+        {canModerate ? <a className="auth-control auth-control-moderator" href="/moderator"><ClipboardCheck size={15} /> Operations desk</a> : null}
+        <a className="auth-control auth-control-signed-in" href="/api/auth/logout"><UserRoundCheck size={15} /> Signed in <LogOut size={14} /></a>
+      </>
+    );
   }
 
   return <a className="auth-control" href="/signin"><LogIn size={15} /> Sign in for photo evidence</a>;

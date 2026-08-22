@@ -13,3 +13,7 @@ output "issuer" {
 output "hosted_ui_domain" {
   value = "${aws_cognito_user_pool_domain.hosted_ui.domain}.auth.${var.aws_region}.amazoncognito.com"
 }
+
+output "group_names" {
+  value = keys(aws_cognito_user_group.roles)
+}

@@ -60,3 +60,17 @@ resource "aws_cognito_user_pool_domain" "hosted_ui" {
   domain       = var.domain_prefix
   user_pool_id = aws_cognito_user_pool.reporters.id
 }
+
+resource "aws_cognito_user_group" "roles" {
+  for_each = {
+    Reporter      = 40
+    Responder     = 30
+    Moderator     = 20
+    Administrator = 10
+  }
+
+  user_pool_id = aws_cognito_user_pool.reporters.id
+  name         = each.key
+  description  = "CivicSignal ${lower(each.key)} role"
+  precedence   = each.value
+}

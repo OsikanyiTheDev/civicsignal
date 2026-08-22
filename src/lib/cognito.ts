@@ -43,6 +43,37 @@ export function getCognitoHostedUiConfig(): CognitoHostedUiConfig | null {
   };
 }
 
+export type JwtClaims = {
+  sub?: string;
+  email?: string;
+  "cognito:groups"?: string[] | string;
+};
+
+export function decodeJwtClaims(token: string): JwtClaims {
+  try {
+    const [, payload] = token.split(".");
+    if (!payload) return {};
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    return JSON.parse(Buffer.from(normalized, "base64url").toString("utf8")) as JwtClaims;
+  } catch {
+    return {};
+  }
+}
+
+export function claimGroups(token: string): string[] {
+  const groups = decodeJwtClaims(token)["cognito:groups"];
+  if (Array.isArray(groups)) return groups;
+  if (typeof groups === "string") {
+    try {
+      const parsed = JSON.parse(groups);
+      return Array.isArray(parsed) ? parsed : groups.split(",").map((group) => group.trim()).filter(Boolean);
+    } catch {
+      return groups.split(",").map((group) => group.trim()).filter(Boolean);
+    }
+  }
+  return [];
+}
+
 export async function cognitoPublicRequest<T>(region: string, target: string, payload: Record<string, unknown>): Promise<T> {
   const response = await fetch(`https://cognito-idp.${region}.amazonaws.com/`, {
     method: "POST",

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, Clock3, MapPinned, ShieldCheck } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -22,6 +23,7 @@ function formatTime(value: string) {
 export function IncidentDetail({ id }: IncidentDetailProps) {
   const apiBaseUrl = process.env.NEXT_PUBLIC_CIVICSIGNAL_API_URL?.replace(/\/$/, "");
   const [incident, setIncident] = useState<Incident | null>(null);
+  const [approvedEvidence, setApprovedEvidence] = useState(false);
   const [loading, setLoading] = useState(Boolean(apiBaseUrl));
   const [error, setError] = useState(apiBaseUrl ? "" : "This issue detail page is available when the live reporting service is connected.");
 
@@ -34,6 +36,8 @@ export function IncidentDetail({ id }: IncidentDetailProps) {
         const data = await response.json() as { incident?: ApiIncident; message?: string };
         if (!response.ok || !data.incident) throw new Error(data.message || "Unable to load this report.");
         setIncident(incidentFromApi(data.incident));
+        const evidenceResponse = await fetch(`${apiBaseUrl}/incidents/${id}/evidence`);
+        setApprovedEvidence(evidenceResponse.ok);
       })
       .catch((requestError) => {
         if ((requestError as Error).name !== "AbortError") setError(requestError instanceof Error ? requestError.message : "Unable to load this report.");
@@ -95,9 +99,7 @@ export function IncidentDetail({ id }: IncidentDetailProps) {
 
           <section className="incident-evidence-card">
             <p className="signal-label">📷 Photo evidence</p>
-            <h2>Private review only</h2>
-            <p>Photos shared with a report remain private until a future moderation workflow approves them for public display. No raw uploaded image is shown here automatically.</p>
-            <span>🔐 Helps protect people, homes, and sensitive details</span>
+            {approvedEvidence ? <><h2>Approved public evidence</h2><Image className="approved-evidence-image" src={`/api/incidents/${incident.id}/evidence`} alt="Approved evidence attached to this community report" width={900} height={540} unoptimized /><p>This image was reviewed and approved for public display.</p></> : <><h2>Private review only</h2><p>Photos shared with a report remain private until a moderator approves them for public display. No raw uploaded image is shown here automatically.</p><span>🔐 Helps protect people, homes, and sensitive details</span></>}
           </section>
         </div>
       </div>

@@ -127,6 +127,7 @@ section[id] { scroll-margin-top: 84px; }
 .auth-control, .auth-coming-soon { display: inline-flex; min-height: 34px; padding: 0 9px; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 7px 3px 7px 3px; color: var(--teal); background: var(--surface); font-size: 0.67rem; font-weight: 750; white-space: nowrap; }
 .auth-control:hover { border-color: var(--teal); background: var(--teal-soft); }
 .auth-control-signed-in { color: var(--green); }
+.auth-control-moderator { color: var(--violet); }
 .auth-coming-soon { color: var(--ink-faint); background: transparent; font-size: 0.61rem; }
 .civic-menu-button, .civic-mobile-nav { display: none; }
 

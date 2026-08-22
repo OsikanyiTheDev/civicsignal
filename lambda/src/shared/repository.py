@@ -42,7 +42,7 @@ def list_incidents(limit: int = 50) -> list[dict[str, Any]]:
     return sorted(items, key=lambda item: item.get("updated_at", ""), reverse=True)
 
 
-def update_incident_status(incident_id: str, status: str) -> dict[str, Any]:
+def update_incident_status(incident_id: str, status: str, note: str = "Status updated") -> dict[str, Any]:
     now = utc_now()
     result = _table.update_item(
         Key=incident_key(incident_id),
@@ -56,7 +56,7 @@ def update_incident_status(incident_id: str, status: str) -> dict[str, Any]:
             ":zero": 0,
             ":one": 1,
             ":empty_history": [],
-            ":history_event": [{"status": status, "at": now, "note": "Status updated"}],
+            ":history_event": [{"status": status, "at": now, "note": note}],
         },
         ConditionExpression="attribute_exists(PK)",
         ReturnValues="ALL_NEW",

@@ -31,6 +31,31 @@ locals {
       route_key = "POST /reports/with-evidence"
       auth      = "JWT"
     }
+    get_public_evidence = {
+      handler   = "handlers.get_public_evidence.lambda_handler"
+      route_key = "GET /incidents/{id}/evidence"
+      auth      = "NONE"
+    }
+    list_moderation_incidents = {
+      handler   = "handlers.list_moderation_incidents.lambda_handler"
+      route_key = "GET /moderation/incidents"
+      auth      = "JWT"
+    }
+    get_moderation_evidence = {
+      handler   = "handlers.get_moderation_evidence.lambda_handler"
+      route_key = "GET /moderation/incidents/{id}/evidence"
+      auth      = "JWT"
+    }
+    review_evidence = {
+      handler   = "handlers.review_evidence.lambda_handler"
+      route_key = "POST /moderation/incidents/{id}/evidence/review"
+      auth      = "JWT"
+    }
+    update_status_moderation = {
+      handler   = "handlers.update_status_moderation.lambda_handler"
+      route_key = "PATCH /moderation/incidents/{id}/status"
+      auth      = "JWT"
+    }
     request_upload = {
       handler   = "handlers.request_upload.lambda_handler"
       route_key = "POST /uploads/presign"
@@ -84,9 +109,12 @@ resource "aws_iam_role_policy" "api_data_access" {
         Resource = [var.incidents_table_arn, "${var.incidents_table_arn}/index/*"]
       },
       {
-        Sid      = "PrivateEvidenceUpload"
-        Effect   = "Allow"
-        Action   = ["s3:PutObject"]
+        Sid    = "PrivateEvidenceUpload"
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+        ]
         Resource = "${var.evidence_bucket_arn}/pending-evidence/*"
       },
       {

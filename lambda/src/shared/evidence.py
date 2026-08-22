@@ -28,3 +28,12 @@ def create_private_upload_form(incident_id: str, content_type: str) -> tuple[str
         ExpiresIn=300,
     )
     return key, post
+
+
+def create_private_download_url(key: str, expires_in: int = 300) -> str:
+    """Create a short-lived review or public-approved evidence URL."""
+    return _s3.generate_presigned_url(
+        "get_object",
+        Params={"Bucket": EVIDENCE_BUCKET, "Key": key},
+        ExpiresIn=expires_in,
+    )
