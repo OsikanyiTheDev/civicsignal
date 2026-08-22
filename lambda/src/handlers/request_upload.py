@@ -1,41 +1,26 @@
 from __future__ import annotations
 
-import os
-import uuid
 from typing import Any
 
-import boto3
-
+from shared.evidence import create_private_upload_form
 from shared.http import parse_json_body, response
-
-BUCKET_NAME = os.environ["EVIDENCE_BUCKET"]
-_s3 = boto3.client("s3")
-ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
-MAX_UPLOAD_BYTES = 5 * 1024 * 1024
+from shared.repository import get_incident
 
 
 def lambda_handler(event: dict[str, Any], _context: Any) -> dict[str, Any]:
-    """Create a constrained, private S3 upload form for trusted workflow users.
+    """Internal future route for trusted evidence operations.
 
-    The Terraform route is AWS_IAM protected in the MVP. Public evidence uploads
-    are intentionally deferred until a Cognito and moderation flow is enabled.
+    The public website uses the Cognito-protected report-with-evidence route.
+    This route remains AWS_IAM protected for operational tooling.
     """
     try:
         payload = parse_json_body(event)
-        content_type = payload.get("content_type")
-        if content_type not in ALLOWED_TYPES:
-            return response(400, {"message": "Unsupported content type"})
-        key = f"pending-evidence/{uuid.uuid4()}"
-        post = _s3.generate_presigned_post(
-            Bucket=BUCKET_NAME,
-            Key=key,
-            Fields={"Content-Type": content_type},
-            Conditions=[
-                {"Content-Type": content_type},
-                ["content-length-range", 1, MAX_UPLOAD_BYTES],
-            ],
-            ExpiresIn=300,
-        )
+        incident_id = payload.get("incident_id")
+        if not isinstance(incident_id, str) or not incident_id:
+            return response(400, {"message": "incident_id is required"})
+        if not get_incident(incident_id):
+            return response(404, {"message": "Incident not found"})
+        key, post = create_private_upload_form(incident_id, payload.get("content_type"))
         return response(200, {"upload": post, "object_key": key, "expires_in_seconds": 300})
-    except (ValueError, TypeError):
-        return response(400, {"message": "A valid content_type is required"})
+    except (ValueError, TypeError) as error:
+        return response(400, {"message": str(error)})

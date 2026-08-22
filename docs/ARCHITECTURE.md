@@ -22,21 +22,25 @@ EventBridge custom bus
 SNS operations notification
 ```
 
-## Evidence path
+## Verified photo-evidence path
 
 ```text
-Trusted moderation workflow
+Verified reporter
   ↓
-POST /uploads/presign  [AWS_IAM protected]
+Cognito email sign-in
+  ↓
+JWT-protected POST /reports/with-evidence
   ↓
 Constrained S3 presigned POST
   ↓
 Private S3 bucket
   ↓
 Encryption + versioning + public access block
+  ↓
+Pending private review
 ```
 
-Public evidence upload is deliberately deferred. It should not be enabled until the project has a Cognito identity design, abuse controls, malware scanning decision, retention policy, and moderation workflow.
+Text-only reports remain public. Photo evidence requires a verified Cognito sign-in and is never shown automatically on the public board. See [PHOTO_EVIDENCE.md](PHOTO_EVIDENCE.md).
 
 ## Data model
 

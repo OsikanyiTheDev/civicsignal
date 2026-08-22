@@ -1,7 +1,7 @@
 "use client";
 
-import { CheckCircle2, ImagePlus, Send, ShieldAlert } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { CheckCircle2, ImagePlus, LogIn, Send, ShieldAlert } from "lucide-react";
+import { FormEvent, useEffect, useState } from "react";
 
 import {
   categoryMeta,
@@ -22,12 +22,54 @@ type CreateIncidentResponse = {
   message: string;
 };
 
+type PresignedPost = {
+  url: string;
+  fields: Record<string, string>;
+};
+
+type EvidenceReportResponse = CreateIncidentResponse & {
+  evidence_upload: PresignedPost;
+};
+
+type AuthState = {
+  available: boolean;
+  authenticated: boolean;
+};
+
+const ACCEPTED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const MAX_EVIDENCE_BYTES = 5 * 1024 * 1024;
+
 export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFormProps) {
   const [category, setCategory] = useState<IncidentCategory>("Drainage");
   const [submitted, setSubmitted] = useState(false);
+  const [submittedWithPhoto, setSubmittedWithPhoto] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState("");
+  const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
+  const [auth, setAuth] = useState<AuthState | null>(null);
   const isAwsConnected = Boolean(apiBaseUrl);
+
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((response) => response.json())
+      .then((data: AuthState) => setAuth(data))
+      .catch(() => setAuth({ available: false, authenticated: false }));
+  }, []);
+
+  async function uploadPrivateEvidence(upload: PresignedPost, file: File) {
+    const uploadBody = new FormData();
+    Object.entries(upload.fields).forEach(([key, value]) => uploadBody.append(key, value));
+    uploadBody.append("file", file);
+
+    const uploadResponse = await fetch(upload.url, {
+      method: "POST",
+      body: uploadBody,
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error("The photo could not be uploaded. Your report was not published with photo evidence.");
+    }
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -42,7 +84,34 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
     setIsSending(true);
 
     try {
-      if (apiBaseUrl) {
+      if (evidenceFile) {
+        if (!isAwsConnected) {
+          throw new Error("Photo evidence is available after the live reporting service is connected.");
+        }
+        if (!auth?.available || !auth.authenticated) {
+          throw new Error("Please sign in with a verified email before attaching private photo evidence.");
+        }
+        if (!ACCEPTED_IMAGE_TYPES.has(evidenceFile.type)) {
+          throw new Error("Use a JPG, PNG, or WebP image for photo evidence.");
+        }
+        if (evidenceFile.size > MAX_EVIDENCE_BYTES) {
+          throw new Error("Photo evidence must be 5 MB or smaller.");
+        }
+
+        const response = await fetch("/api/reports/with-evidence", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ title, area, summary, category, urgency, evidence_content_type: evidenceFile.type }),
+        });
+        const data = await response.json() as EvidenceReportResponse | { message?: string };
+        if (!response.ok || !("incident" in data) || !("evidence_upload" in data)) {
+          throw new Error(data.message || "The report could not be submitted with photo evidence.");
+        }
+
+        await uploadPrivateEvidence(data.evidence_upload, evidenceFile);
+        onIncidentCreated?.(incidentFromApi(data.incident));
+        setSubmittedWithPhoto(true);
+      } else if (apiBaseUrl) {
         const response = await fetch(`${apiBaseUrl}/incidents`, {
           method: "POST",
           headers: { "content-type": "application/json" },
@@ -50,9 +119,10 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
         });
         const data = await response.json() as CreateIncidentResponse | { message?: string };
         if (!response.ok || !("incident" in data)) {
-          throw new Error(data.message || "The AWS API could not accept this report.");
+          throw new Error(data.message || "The reporting service could not accept this report.");
         }
         onIncidentCreated?.(incidentFromApi(data.incident));
+        setSubmittedWithPhoto(false);
       } else {
         await new Promise((resolve) => window.setTimeout(resolve, 350));
         onIncidentCreated?.({
@@ -61,15 +131,17 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
           category,
           status: "Submitted",
           area,
-          reportedAt: "Just now · demo mode",
+          reportedAt: "Just now · practice mode",
           summary,
           urgency,
           emoji: categoryMeta[category].emoji,
           updates: 1,
         });
+        setSubmittedWithPhoto(false);
       }
 
       formElement.reset();
+      setEvidenceFile(null);
       setSubmitted(true);
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : "Unable to submit this report. Please try again.");
@@ -83,14 +155,16 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
       <div className="report-success" role="status">
         <CheckCircle2 size={27} />
         <div>
-          <p className="signal-label">Signal received</p>
+          <p className="signal-label">Report received</p>
           <h3>{isAwsConnected ? "Your report has been received." : "Your practice report is now on the board."}</h3>
-          <p>{isAwsConnected ? "Your report is now marked Submitted and can be followed on the board. A Submitted status means it has been received; it does not imply an official response or resolution." : "Practice mode lets you explore how reporting works without sending a live community report."}</p>
+          <p>{submittedWithPhoto ? "Your photo evidence was uploaded privately for review. It will not appear automatically on the public board." : isAwsConnected ? "Your report is now marked Submitted and can be followed on the board. A Submitted status means it has been received; it does not imply an official response or resolution." : "Practice mode lets you explore how reporting works without sending a live community report."}</p>
           <button className="text-action" type="button" onClick={() => setSubmitted(false)}>Submit another report →</button>
         </div>
       </div>
     );
   }
+
+  const photoEvidenceReady = isAwsConnected && auth?.available && auth.authenticated;
 
   return (
     <form className="report-form" onSubmit={submit}>
@@ -122,7 +196,7 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
 
       <label>
         <span>What is happening?</span>
-        <textarea name="summary" required minLength={20} maxLength={600} rows={4} placeholder="Describe the issue, its impact, and anything a verifier should know. Avoid names, phone numbers, and home addresses." />
+        <textarea name="summary" required minLength={20} maxLength={600} rows={4} placeholder="Describe the issue, its impact, and anything a reviewer should know. Avoid names, phone numbers, and home addresses." />
       </label>
 
       <div className="report-form-grid report-form-bottom">
@@ -134,10 +208,17 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
             <option value="High">High — immediate public-risk concern</option>
           </select>
         </label>
-        <label className="upload-placeholder">
-          <span>Photo evidence <small>{isAwsConnected ? "Coming next" : "Available after public launch"}</small></span>
-          <div><ImagePlus size={17} /> Photo evidence is reviewed privately</div>
-        </label>
+        <div className="evidence-control">
+          <span>Photo evidence <small>Optional · private review only</small></span>
+          {auth === null ? <div className="evidence-state"><ImagePlus size={17} /> Checking sign-in…</div> : photoEvidenceReady ? (
+            <label className="file-picker"><ImagePlus size={17} /><span>{evidenceFile ? evidenceFile.name : "Choose a JPG, PNG, or WebP photo"}</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => setEvidenceFile(event.target.files?.[0] || null)} /></label>
+          ) : auth?.available ? (
+            <a className="evidence-sign-in" href="/api/auth/login"><LogIn size={16} /> Sign in to attach a private photo</a>
+          ) : (
+            <div className="evidence-state"><ImagePlus size={17} /> Photo sign-in is being prepared</div>
+          )}
+          <small className="evidence-help">Photos must be JPG, PNG, or WebP and no larger than 5 MB.</small>
+        </div>
       </div>
 
       <p className="privacy-guidance"><ShieldAlert size={15} /> CivicSignal is not an emergency service. For immediate danger, contact local emergency services. Do not submit medical, financial, or sensitive personal information.</p>

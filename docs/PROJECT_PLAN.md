@@ -23,12 +23,13 @@
 - Submit validated reports to `POST /incidents`
 - Add error state and retry experience
 
-## Stage 3 — Moderator Security
+## Stage 3 — Verified Evidence & Moderator Security
 
-- Design Cognito groups: reporter, moderator, responder, administrator
-- Attach route-level authorizers
-- Implement verified status updates and audit events
-- Decide public evidence upload/scan/moderation workflow
+- Cognito email-verification and Hosted UI sign-in for private photo evidence
+- JWT-protected `POST /reports/with-evidence` route
+- Private constrained photo upload after authenticated report creation
+- Next: Cognito groups for moderator, responder and administrator workflows
+- Next: verified status updates, audit events, image scanning and moderation dashboard
 
 ## Stage 4 — Civic Readiness
 

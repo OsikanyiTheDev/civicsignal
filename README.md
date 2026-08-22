@@ -33,7 +33,7 @@ It is intentionally designed as a **community coordination prototype**, not as a
 ### AWS backend implementation in this repository
 
 - Terraform modules for DynamoDB, private evidence storage, event routing, Lambda/API Gateway and observability
-- Python 3.12 Lambda handlers for health, create, list, get, status-update and constrained upload-presign operations
+- Python 3.12 Lambda handlers for health, public reports, verified photo-evidence reports, list, get, status-update and internal upload operations
 - EventBridge event routing for submitted incidents
 - SNS operations topic and CloudWatch alarms
 - Optional $10/month AWS Budget guardrail with email notifications
@@ -57,8 +57,8 @@ EventBridge → SNS operations notifications
           ↓
 CloudWatch logs, alarms and API access logs
 
-Private evidence path:
-Trusted workflow → constrained presigned S3 upload → encrypted private bucket
+Verified private evidence path:
+Cognito email sign-in → JWT-protected report → constrained presigned S3 upload → encrypted private bucket
 ```
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for implementation details.

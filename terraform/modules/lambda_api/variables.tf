@@ -43,6 +43,21 @@ variable "allowed_origins" {
   description = "Browser origins allowed by HTTP API CORS."
 }
 
+variable "aws_region" {
+  type        = string
+  description = "Region used to construct the Cognito JWT issuer URL."
+}
+
+variable "cognito_user_pool_id" {
+  type        = string
+  description = "Cognito user pool used to protect photo-evidence routes."
+}
+
+variable "cognito_user_pool_client_id" {
+  type        = string
+  description = "Cognito web client accepted as the JWT audience."
+}
+
 variable "log_retention_days" {
   type        = number
   description = "CloudWatch log retention for the API and Lambda functions."

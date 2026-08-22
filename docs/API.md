@@ -44,11 +44,30 @@ Returns the bounded public board for the MVP.
 
 Returns a public incident record, excluding DynamoDB internal keys.
 
-## Moderation routes
+## Verified photo-evidence route
+
+### `POST /reports/with-evidence`
+
+Requires a valid Cognito JWT. The CivicSignal frontend keeps the token in an HttpOnly cookie and proxies this request server-side.
+
+```json
+{
+  "title": "Blocked drainage near crossing",
+  "area": "Central ward",
+  "summary": "Standing water is blocking a busy pedestrian crossing after rainfall.",
+  "category": "Drainage",
+  "urgency": "High",
+  "evidence_content_type": "image/jpeg"
+}
+```
+
+The response creates the report and returns a five-minute constrained S3 POST policy. The browser uploads the selected image directly to the private bucket. The photo is not public.
+
+## Internal moderation routes
 
 ### `PATCH /incidents/{id}/status`
 
-Requires AWS IAM authorization in the Terraform route configuration.
+Requires AWS IAM authorization in the current Terraform route configuration.
 
 ```json
 { "status": "In progress" }
@@ -56,10 +75,4 @@ Requires AWS IAM authorization in the Terraform route configuration.
 
 ### `POST /uploads/presign`
 
-Requires AWS IAM authorization in the current implementation.
-
-```json
-{ "content_type": "image/jpeg" }
-```
-
-Returns a five-minute constrained S3 POST policy for private evidence storage.
+Remains AWS IAM protected for trusted internal evidence operations.

@@ -18,6 +18,14 @@ def incident_key(incident_id: str) -> dict[str, str]:
     return {"PK": f"INCIDENT#{incident_id}", "SK": "METADATA"}
 
 
+PRIVATE_INCIDENT_FIELDS = {"PK", "SK", "GSI1PK", "GSI1SK", "reporter_sub", "evidence_key", "evidence_status"}
+
+
+def public_incident(item: dict[str, Any]) -> dict[str, Any]:
+    """Remove storage and reporter identity fields before public API responses."""
+    return {key: value for key, value in item.items() if key not in PRIVATE_INCIDENT_FIELDS}
+
+
 def put_incident(item: dict[str, Any]) -> None:
     _table.put_item(Item=item, ConditionExpression="attribute_not_exists(PK)")
 

@@ -26,6 +26,11 @@ locals {
       route_key = "POST /incidents"
       auth      = "NONE"
     }
+    create_incident_with_evidence = {
+      handler   = "handlers.create_incident_with_evidence.lambda_handler"
+      route_key = "POST /reports/with-evidence"
+      auth      = "JWT"
+    }
     request_upload = {
       handler   = "handlers.request_upload.lambda_handler"
       route_key = "POST /uploads/presign"
@@ -155,6 +160,18 @@ resource "aws_cloudwatch_log_group" "api_gateway" {
   tags              = var.tags
 }
 
+resource "aws_apigatewayv2_authorizer" "cognito" {
+  api_id           = aws_apigatewayv2_api.public.id
+  authorizer_type  = "JWT"
+  identity_sources = ["$request.header.Authorization"]
+  name             = "${var.name_prefix}-photo-evidence-jwt"
+
+  jwt_configuration {
+    audience = [var.cognito_user_pool_client_id]
+    issuer   = "https://cognito-idp.${var.aws_region}.amazonaws.com/${var.cognito_user_pool_id}"
+  }
+}
+
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.public.id
   name        = "$default"
@@ -197,6 +214,7 @@ resource "aws_apigatewayv2_route" "lambda" {
   route_key          = each.value.route_key
   target             = "integrations/${aws_apigatewayv2_integration.lambda[each.key].id}"
   authorization_type = each.value.auth
+  authorizer_id      = each.value.auth == "JWT" ? aws_apigatewayv2_authorizer.cognito.id : null
 }
 
 resource "aws_lambda_permission" "api_gateway" {

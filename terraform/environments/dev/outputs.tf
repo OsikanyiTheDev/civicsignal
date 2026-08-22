@@ -14,3 +14,15 @@ output "evidence_bucket_name" {
 output "alarm_names" {
   value = module.observability.alarm_names
 }
+
+output "cognito_user_pool_id" {
+  value = module.auth.user_pool_id
+}
+
+output "cognito_user_pool_client_id" {
+  value = module.auth.user_pool_client_id
+}
+
+output "cognito_hosted_ui_domain" {
+  value = module.auth.hosted_ui_domain
+}

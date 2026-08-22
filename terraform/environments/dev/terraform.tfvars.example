@@ -4,7 +4,19 @@ evidence_bucket_name = "replace-with-unique-civicsignal-evidence-bucket"
 # Add the production frontend after Vercel deployment.
 allowed_origins = [
   "http://localhost:3000",
-  "https://your-civicsignal-frontend.vercel.app"
+  "https://civicsignalgh.vercel.app"
+]
+
+cognito_domain_prefix = "civicsignal-dev-ACCOUNT_ID"
+
+auth_callback_urls = [
+  "http://localhost:3000/api/auth/callback",
+  "https://civicsignalgh.vercel.app/api/auth/callback"
+]
+
+auth_logout_urls = [
+  "http://localhost:3000",
+  "https://civicsignalgh.vercel.app"
 ]
 
 # Receives SNS confirmations, operational notifications, and the cost guardrail.

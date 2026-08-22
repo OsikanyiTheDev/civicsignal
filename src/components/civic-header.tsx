@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Menu, Radio, X } from "lucide-react";
 import { useState } from "react";
 
+import { AuthControl } from "@/components/auth-control";
+
 const navItems = [
   ["Live board", "#board"],
   ["How it works", "#how-it-works"],
@@ -30,6 +32,7 @@ export function CivicHeader() {
         </nav>
 
         <div className="civic-nav-actions">
+          <AuthControl />
           <a className="civic-button civic-button-small" href="#report">Report an issue <span aria-hidden="true">↗</span></a>
           <button
             type="button"

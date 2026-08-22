@@ -22,6 +22,21 @@ variable "allowed_origins" {
   default     = ["http://localhost:3000"]
 }
 
+variable "cognito_domain_prefix" {
+  type        = string
+  description = "Globally unique Cognito Hosted UI domain prefix."
+}
+
+variable "auth_callback_urls" {
+  type        = list(string)
+  description = "Allowed Cognito sign-in callback URLs for the web application."
+}
+
+variable "auth_logout_urls" {
+  type        = list(string)
+  description = "Allowed Cognito sign-out return URLs for the web application."
+}
+
 variable "evidence_bucket_name" {
   type        = string
   description = "Globally unique private S3 evidence bucket name."
