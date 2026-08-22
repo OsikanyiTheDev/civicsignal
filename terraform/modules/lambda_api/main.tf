@@ -66,6 +66,11 @@ locals {
       route_key = "GET /moderation/incidents/{id}/evidence"
       auth      = "JWT"
     }
+    list_audit_events = {
+      handler   = "handlers.list_audit_events.lambda_handler"
+      route_key = "GET /moderation/incidents/{id}/audit"
+      auth      = "JWT"
+    }
     review_evidence = {
       handler   = "handlers.review_evidence.lambda_handler"
       route_key = "POST /moderation/incidents/{id}/evidence/review"

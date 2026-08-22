@@ -1,5 +1,6 @@
 # Choose a globally unique name before deploying.
-evidence_bucket_name = "replace-with-unique-civicsignal-evidence-bucket"
+evidence_bucket_name     = "replace-with-unique-civicsignal-evidence-bucket"
+evidence_retention_days = 90
 
 # Add the production frontend after Vercel deployment.
 allowed_origins = [

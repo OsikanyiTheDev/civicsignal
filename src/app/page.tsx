@@ -140,7 +140,7 @@ export default function HomePage() {
         <div className="shell civic-footer-grid">
           <div><strong>CivicSignal</strong><span>Community Infrastructure Incident & Response Hub</span></div>
           <p>Community information tool · Not an emergency service</p>
-          <a href="#safety">Report safely ↗</a>
+          <div className="footer-safety-links"><a href="#safety">Report safely</a><a href="/privacy">Privacy notice</a></div>
         </div>
       </footer>
     </>

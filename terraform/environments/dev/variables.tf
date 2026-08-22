@@ -42,6 +42,12 @@ variable "evidence_bucket_name" {
   description = "Globally unique private S3 evidence bucket name."
 }
 
+variable "evidence_retention_days" {
+  type        = number
+  description = "Private evidence retention period in days."
+  default     = 90
+}
+
 variable "alert_email" {
   type        = string
   description = "Optional operational alerts email. Confirm the SNS subscription after deployment."

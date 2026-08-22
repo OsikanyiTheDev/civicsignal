@@ -6,13 +6,13 @@ from botocore.exceptions import ClientError
 
 from shared.authz import AuthorizationError, require_responder
 from shared.http import parse_json_body, response
-from shared.repository import public_incident, update_incident_status
+from shared.repository import public_incident, update_incident_status, write_audit_event
 from shared.validation import ValidationError, validate_status
 
 
 def lambda_handler(event: dict[str, Any], _context: Any) -> dict[str, Any]:
     try:
-        require_responder(event)
+        actor_sub = require_responder(event)
         incident_id = (event.get("pathParameters") or {}).get("id")
         if not incident_id:
             return response(400, {"message": "Incident id is required"})
@@ -20,6 +20,7 @@ def lambda_handler(event: dict[str, Any], _context: Any) -> dict[str, Any]:
         status = validate_status(payload)
         note = str(payload.get("note") or "Status updated by CivicSignal responder").strip()[:300]
         incident = update_incident_status(incident_id, status, note)
+        write_audit_event(incident_id, actor_sub, f"Status changed to {status}", note)
         return response(200, {"incident": public_incident(incident)})
     except AuthorizationError as error:
         return response(403, {"message": str(error)})

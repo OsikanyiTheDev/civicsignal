@@ -8,6 +8,12 @@ variable "allowed_origins" {
   description = "Approved browser origins for constrained presigned POST uploads."
 }
 
+variable "evidence_retention_days" {
+  type        = number
+  description = "Number of days before private photo evidence expires automatically."
+  default     = 90
+}
+
 variable "tags" {
   type        = map(string)
   description = "Common AWS resource tags."

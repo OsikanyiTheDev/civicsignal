@@ -169,6 +169,7 @@ export function ReportIssueForm({ apiBaseUrl, existingIncidents = [], onIncident
       summary,
       category,
       urgency,
+      website: String(form.get("website") || ""),
       location_precision: selectedLocation ? "exact_public" : "area_only",
       exact_location_public_consent: selectedLocation ? exactLocationPublicConsent : undefined,
       ...(selectedLocation ? {
@@ -277,6 +278,7 @@ export function ReportIssueForm({ apiBaseUrl, existingIncidents = [], onIncident
 
   return (
     <form className="report-form" ref={formRef} onSubmit={submit}>
+      <label className="honeypot-field" aria-hidden="true">Website<input name="website" type="text" tabIndex={-1} autoComplete="off" /></label>
       <div className="report-form-heading">
         <div>
           <p className="signal-label">Create a community signal</p>

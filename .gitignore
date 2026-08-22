@@ -14,6 +14,10 @@
 *.tfstate.*
 .terraform/
 *.tfplan
+backend.tf
+tfplan
+tfplan-*
+*-plan.txt
 
 # Lambda build artifacts
 lambda/dist/

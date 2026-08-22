@@ -1,0 +1,12 @@
+# Copy this file to backend.tf only after bootstrapping a dedicated Terraform
+# state bucket. Do not commit a backend.tf containing account-specific names.
+#
+# terraform {
+#   backend "s3" {
+#     bucket       = "your-unique-terraform-state-bucket"
+#     key          = "civicsignal/dev/terraform.tfstate"
+#     region       = "us-east-1"
+#     encrypt      = true
+#     use_lockfile = true
+#   }
+# }

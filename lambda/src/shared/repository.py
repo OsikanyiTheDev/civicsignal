@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import uuid
 from datetime import UTC, datetime
 from typing import Any
 
@@ -116,6 +117,27 @@ def community_insights() -> dict[str, Any]:
             reverse=True,
         )[:5],
     }
+
+
+def write_audit_event(incident_id: str, actor_sub: str, action: str, detail: str) -> None:
+    now = utc_now()
+    _table.put_item(
+        Item={
+            "PK": f"INCIDENT#{incident_id}",
+            "SK": f"AUDIT#{now}#{uuid.uuid4()}",
+            "actor_sub": actor_sub,
+            "action": action,
+            "detail": detail,
+            "created_at": now,
+        }
+    )
+
+
+def list_audit_events(incident_id: str) -> list[dict[str, Any]]:
+    result = _table.query(
+        KeyConditionExpression=Key("PK").eq(f"INCIDENT#{incident_id}") & Key("SK").begins_with("AUDIT#"),
+    )
+    return sorted(result.get("Items", []), key=lambda item: item.get("created_at", ""), reverse=True)
 
 
 def update_incident_status(incident_id: str, status: str, note: str = "Status updated") -> dict[str, Any]:

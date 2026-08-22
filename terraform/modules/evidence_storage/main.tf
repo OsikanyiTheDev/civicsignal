@@ -66,4 +66,17 @@ resource "aws_s3_bucket_lifecycle_configuration" "evidence" {
 
     filter {}
   }
+
+  rule {
+    id     = "expire-private-evidence-after-retention-window"
+    status = "Enabled"
+
+    filter {
+      prefix = "pending-evidence/"
+    }
+
+    expiration {
+      days = var.evidence_retention_days
+    }
+  }
 }

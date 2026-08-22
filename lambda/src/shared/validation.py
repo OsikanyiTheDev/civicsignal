@@ -62,6 +62,10 @@ def validate_public_location(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def validate_incident_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    # Hidden browser field used as basic bot friction. Real users never see it.
+    if payload.get("website"):
+        raise ValidationError("Unable to submit this report")
+
     category = payload.get("category")
     urgency = payload.get("urgency", "Medium")
     if category not in CATEGORIES:

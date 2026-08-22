@@ -5,10 +5,11 @@ module "incidents_store" {
 }
 
 module "evidence_storage" {
-  source          = "../../modules/evidence_storage"
-  bucket_name     = var.evidence_bucket_name
-  allowed_origins = var.allowed_origins
-  tags            = local.common_tags
+  source                  = "../../modules/evidence_storage"
+  bucket_name             = var.evidence_bucket_name
+  allowed_origins         = var.allowed_origins
+  evidence_retention_days = var.evidence_retention_days
+  tags                    = local.common_tags
 }
 
 module "notifications" {

@@ -235,6 +235,7 @@ section[id] { scroll-margin-top: 84px; }
 
 .signal-report-panel { position: sticky; top: 93px; border: 1px solid rgba(8, 123, 120, 0.23); border-radius: 17px 5px 17px 5px; overflow: hidden; background: var(--surface); }
 .report-form { padding: 18px; }
+.honeypot-field { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; }
 .report-form-heading { display: flex; margin-bottom: 15px; gap: 12px; justify-content: space-between; }
 .report-form-heading h3 { max-width: 280px; margin: 0; font-size: 1rem; line-height: 1.26; }
 .report-form-heading .signal-label { margin-bottom: 7px; font-size: 0.57rem; }
@@ -338,6 +339,7 @@ section[id] { scroll-margin-top: 84px; }
 .civic-footer strong { display: block; color: #ffffff; font-size: 0.84rem; }
 .civic-footer div span, .civic-footer p, .civic-footer > div + p { margin: 2px 0 0; color: rgba(255, 255, 255, 0.58); font-size: 0.67rem; }
 .civic-footer a { color: var(--lime); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.footer-safety-links { display: flex; justify-self: end; gap: 12px; font-size: 0.7rem; font-weight: 750; }
 .civic-footer > a { justify-self: end; font-size: 0.7rem; font-weight: 750; }
 
 @media (max-width: 1060px) {
@@ -367,7 +369,7 @@ section[id] { scroll-margin-top: 84px; }
   .safety-grid { grid-template-columns: 1fr; }
   .safety-card-primary { grid-column: auto; }
   .civic-footer-grid { grid-template-columns: 1fr; gap: 13px; }
-  .civic-footer > a { justify-self: start; }
+  .footer-safety-links, .civic-footer > a { justify-self: start; }
   .civic-cta-actions { min-width: 0; }
 }
 
