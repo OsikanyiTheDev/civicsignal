@@ -117,7 +117,11 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
       urgency,
       location_precision: selectedLocation ? "exact_public" : "area_only",
       exact_location_public_consent: selectedLocation ? exactLocationPublicConsent : undefined,
-      ...(selectedLocation || {}),
+      ...(selectedLocation ? {
+        latitude: selectedLocation.latitude,
+        longitude: selectedLocation.longitude,
+        location_accuracy_meters: selectedLocation.accuracyMeters,
+      } : {}),
     };
 
     setError("");
