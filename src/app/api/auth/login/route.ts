@@ -1,10 +1,10 @@
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 
-import { AUTH_STATE_COOKIE, getCognitoConfig } from "@/lib/cognito";
+import { AUTH_STATE_COOKIE, getCognitoHostedUiConfig } from "@/lib/cognito";
 
 export async function GET() {
-  const config = getCognitoConfig();
+  const config = getCognitoHostedUiConfig();
   if (!config) {
     return NextResponse.redirect(new URL("/?auth=unavailable", process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"));
   }

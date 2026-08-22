@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
 import "./globals.css";
+import "./auth.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://civicsignal.vercel.app";
 

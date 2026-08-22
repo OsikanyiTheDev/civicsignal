@@ -1,30 +1,63 @@
-export type CognitoConfig = {
-  hostedUiDomain: string;
+export type CognitoAppConfig = {
   clientId: string;
+  region: string;
+  apiUrl: string;
+};
+
+export type CognitoHostedUiConfig = CognitoAppConfig & {
+  hostedUiDomain: string;
   redirectUri: string;
   logoutUri: string;
-  apiUrl: string;
 };
 
 export const ID_TOKEN_COOKIE = "civicsignal_id_token";
 export const AUTH_STATE_COOKIE = "civicsignal_auth_state";
 
-export function getCognitoConfig(): CognitoConfig | null {
-  const hostedUiDomain = process.env.COGNITO_HOSTED_UI_DOMAIN;
+export function getCognitoAppConfig(): CognitoAppConfig | null {
   const clientId = process.env.COGNITO_CLIENT_ID;
-  const redirectUri = process.env.COGNITO_REDIRECT_URI;
-  const logoutUri = process.env.COGNITO_LOGOUT_URI;
   const apiUrl = process.env.CIVICSIGNAL_API_URL || process.env.NEXT_PUBLIC_CIVICSIGNAL_API_URL;
+  const region = process.env.COGNITO_AWS_REGION || "us-east-1";
 
-  if (!hostedUiDomain || !clientId || !redirectUri || !logoutUri || !apiUrl) {
-    return null;
-  }
+  if (!clientId || !apiUrl) return null;
 
   return {
-    hostedUiDomain: hostedUiDomain.replace(/^https:\/\//, "").replace(/\/$/, ""),
     clientId,
-    redirectUri,
-    logoutUri,
+    region,
     apiUrl: apiUrl.replace(/\/$/, ""),
   };
+}
+
+export function getCognitoHostedUiConfig(): CognitoHostedUiConfig | null {
+  const app = getCognitoAppConfig();
+  const hostedUiDomain = process.env.COGNITO_HOSTED_UI_DOMAIN;
+  const redirectUri = process.env.COGNITO_REDIRECT_URI;
+  const logoutUri = process.env.COGNITO_LOGOUT_URI;
+
+  if (!app || !hostedUiDomain || !redirectUri || !logoutUri) return null;
+
+  return {
+    ...app,
+    hostedUiDomain: hostedUiDomain.replace(/^https:\/\//, "").replace(/\/$/, ""),
+    redirectUri,
+    logoutUri,
+  };
+}
+
+export async function cognitoPublicRequest<T>(region: string, target: string, payload: Record<string, unknown>): Promise<T> {
+  const response = await fetch(`https://cognito-idp.${region}.amazonaws.com/`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/x-amz-json-1.1",
+      "x-amz-target": `AWSCognitoIdentityProviderService.${target}`,
+    },
+    body: JSON.stringify(payload),
+    cache: "no-store",
+  });
+
+  const data = await response.json() as { message?: string; __type?: string } & T;
+  if (!response.ok) {
+    const message = data.message || data.__type || "Unable to complete the authentication request.";
+    throw new Error(message.replace(/^\w+#/, ""));
+  }
+  return data;
 }

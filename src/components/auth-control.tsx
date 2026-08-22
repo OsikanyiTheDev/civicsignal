@@ -26,5 +26,5 @@ export function AuthControl() {
     return <a className="auth-control auth-control-signed-in" href="/api/auth/logout"><UserRoundCheck size={15} /> Signed in · Sign out <LogOut size={14} /></a>;
   }
 
-  return <a className="auth-control" href="/api/auth/login"><LogIn size={15} /> Sign in for photo evidence</a>;
+  return <a className="auth-control" href="/signin"><LogIn size={15} /> Sign in for photo evidence</a>;
 }

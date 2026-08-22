@@ -1,10 +1,10 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-import { getCognitoConfig, ID_TOKEN_COOKIE } from "@/lib/cognito";
+import { getCognitoAppConfig, ID_TOKEN_COOKIE } from "@/lib/cognito";
 
 export async function POST(request: NextRequest) {
-  const config = getCognitoConfig();
+  const config = getCognitoAppConfig();
   const cookieStore = await cookies();
   const idToken = cookieStore.get(ID_TOKEN_COOKIE)?.value;
 

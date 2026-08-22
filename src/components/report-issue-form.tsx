@@ -213,7 +213,7 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
           {auth === null ? <div className="evidence-state"><ImagePlus size={17} /> Checking sign-in…</div> : photoEvidenceReady ? (
             <label className="file-picker"><ImagePlus size={17} /><span>{evidenceFile ? evidenceFile.name : "Choose a JPG, PNG, or WebP photo"}</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => setEvidenceFile(event.target.files?.[0] || null)} /></label>
           ) : auth?.available ? (
-            <a className="evidence-sign-in" href="/api/auth/login"><LogIn size={16} /> Sign in to attach a private photo</a>
+            <a className="evidence-sign-in" href="/signin"><LogIn size={16} /> Sign in to attach a private photo</a>
           ) : (
             <div className="evidence-state"><ImagePlus size={17} /> Photo sign-in is being prepared</div>
           )}

@@ -1,10 +1,10 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-import { AUTH_STATE_COOKIE, getCognitoConfig, ID_TOKEN_COOKIE } from "@/lib/cognito";
+import { AUTH_STATE_COOKIE, getCognitoHostedUiConfig, ID_TOKEN_COOKIE } from "@/lib/cognito";
 
 export async function GET(request: NextRequest) {
-  const config = getCognitoConfig();
+  const config = getCognitoHostedUiConfig();
   const homeUrl = new URL("/", request.url);
   if (!config) {
     homeUrl.searchParams.set("auth", "unavailable");
