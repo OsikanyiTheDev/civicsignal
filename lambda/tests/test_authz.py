@@ -13,9 +13,9 @@ class AuthorizationGroupTests(unittest.TestCase):
         self.assertEqual(groups_from_event(event), {"Moderator"})
 
     def test_parses_api_gateway_bracketed_group_claim(self):
-        event = {"requestContext": {"authorizer": {"jwt": {"claims": {"cognito:groups": "[Moderator]"}}}}}
+        event = {"requestContext": {"authorizer": {"jwt": {"claims": {"cognito:groups": "[Moderator]", "sub": "test-user"}}}}}
         self.assertEqual(groups_from_event(event), {"Moderator"})
-        self.assertEqual(require_moderator(event), "")
+        self.assertEqual(require_moderator(event), "test-user")
 
     def test_rejects_non_moderator_group(self):
         event = {"requestContext": {"authorizer": {"jwt": {"claims": {"cognito:groups": "[Reporter]"}}}}}

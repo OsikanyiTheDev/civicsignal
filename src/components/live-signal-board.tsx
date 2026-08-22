@@ -119,7 +119,7 @@ export function LiveSignalBoard() {
         </div>
 
         <aside className="signal-report-panel" id="report">
-          <ReportIssueForm apiBaseUrl={apiBaseUrl} onIncidentCreated={(incident) => {
+          <ReportIssueForm apiBaseUrl={apiBaseUrl} existingIncidents={incidents} onIncidentCreated={(incident) => {
             setIncidents((current) => [incident, ...current]);
             if (apiBaseUrl) setBoardMode("aws");
           }} />

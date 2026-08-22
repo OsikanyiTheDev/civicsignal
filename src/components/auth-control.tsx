@@ -1,6 +1,6 @@
 "use client";
 
-import { ClipboardCheck, LogIn, LogOut, UserRoundCheck } from "lucide-react";
+import { Bell, ClipboardCheck, LogIn, LogOut, UserRoundCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 
 type AuthState = {
@@ -28,6 +28,7 @@ export function AuthControl() {
     const canModerate = auth.groups?.some((group) => ["Moderator", "Administrator", "Responder"].includes(group));
     return (
       <>
+        <a className="auth-control auth-control-following" href="/following"><Bell size={15} /> My issues</a>
         {canModerate ? <a className="auth-control auth-control-moderator" href="/moderator"><ClipboardCheck size={15} /> Operations desk</a> : null}
         <a className="auth-control auth-control-signed-in" href="/api/auth/logout"><UserRoundCheck size={15} /> Signed in <LogOut size={14} /></a>
       </>

@@ -36,6 +36,8 @@ export type Incident = {
   urgency: "Low" | "Medium" | "High";
   emoji: string;
   updates: number;
+  confirmations?: number;
+  followers?: number;
   location?: PublicLocation;
   statusHistory?: StatusEvent[];
 };
@@ -58,6 +60,8 @@ export type ApiIncident = {
   summary: string;
   urgency: Incident["urgency"];
   updates?: number | string;
+  confirmations?: number | string;
+  followers?: number | string;
   created_at?: string;
   updated_at?: string;
   public_latitude?: number | string;
@@ -92,6 +96,8 @@ export function incidentFromApi(incident: ApiIncident): Incident {
     summary: incident.summary,
     urgency: incident.urgency,
     updates: Number(incident.updates ?? 1),
+    confirmations: Number(incident.confirmations ?? 0),
+    followers: Number(incident.followers ?? 0),
     emoji: categoryMeta[incident.category]?.emoji ?? "📍",
     reportedAt: `${formattedTime} · Community report`,
     location: hasPublicLocation ? {

@@ -1,0 +1,20 @@
+/* Signed-in issue following view. */
+.following-page { min-height: 100vh; padding: 118px 0 84px; background: linear-gradient(150deg, rgba(45,113,184,0.08), transparent 40%), var(--canvas); }
+.following-shell { max-width: 920px; }
+.following-shell > h1 { margin: 0 0 9px; font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif; font-size: clamp(2.2rem, 4.4vw, 3.7rem); }
+.following-lead { margin-bottom: 25px; }
+.following-loading, .following-empty, .following-error { display: grid; min-height: 40vh; place-items: center; align-content: center; gap: 10px; text-align: center; }
+.following-loading { color: var(--teal); font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.75rem; }
+.following-loading svg { animation: moderation-spin 1s linear infinite; }
+.following-empty h2, .following-error h2 { margin: 0; font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif; }
+.following-empty p, .following-error p { max-width: 450px; margin: 0 0 10px; }
+.following-list { display: grid; gap: 9px; }
+.following-card { --accent: var(--teal); display: grid; padding: 15px; grid-template-columns: 35px minmax(0,1fr) 22px; gap: 10px; align-items: center; border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 12px 4px 12px 4px; background: var(--surface); transition: transform 150ms ease, box-shadow 150ms ease; }
+.following-card:hover { box-shadow: var(--shadow-small); transform: translateX(3px); }
+.following-card > span { display: grid; width: 31px; height: 31px; place-items: center; border-radius: 8px 3px 8px 3px; background: color-mix(in srgb, var(--accent) 12%, white); }
+.following-card div { display: grid; min-width: 0; gap: 3px; }
+.following-card small { color: var(--accent); font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.57rem; }
+.following-card strong { overflow: hidden; color: var(--ink); font-size: 0.78rem; text-overflow: ellipsis; white-space: nowrap; }
+.following-card p { display: -webkit-box; overflow: hidden; margin: 0; font-size: 0.68rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
+.following-card > svg { color: var(--blue); }
+@media (max-width: 700px) { .following-page { padding-top: 97px; } .following-shell { width: calc(100% - 32px); } }

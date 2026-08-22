@@ -128,6 +128,7 @@ section[id] { scroll-margin-top: 84px; }
 .auth-control:hover { border-color: var(--teal); background: var(--teal-soft); }
 .auth-control-signed-in { color: var(--green); }
 .auth-control-moderator { color: var(--violet); }
+.auth-control-following { color: var(--blue); }
 .auth-coming-soon { color: var(--ink-faint); background: transparent; font-size: 0.61rem; }
 .civic-menu-button, .civic-mobile-nav { display: none; }
 
@@ -266,9 +267,19 @@ section[id] { scroll-margin-top: 84px; }
 .file-picker input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .file-picker svg, .evidence-state svg, .evidence-sign-in svg { color: var(--teal); }
 .evidence-help { color: var(--ink-faint); font-size: 0.56rem; line-height: 1.35; }
+.duplicate-suggestions { display: grid; margin: 1px 0 12px; padding: 10px; gap: 6px; border: 1px solid rgba(112,67,172,0.25); border-radius: 8px 4px 8px 4px; background: var(--violet-soft); }
+.duplicate-suggestions > span { color: var(--violet); font-size: 0.67rem; font-weight: 800; }
+.duplicate-suggestions > p { margin: 0; color: var(--ink-soft); font-size: 0.61rem; line-height: 1.42; }
+.duplicate-suggestions a { display: grid; padding: 7px; grid-template-columns: auto minmax(0,1fr); column-gap: 5px; border-radius: 5px; color: var(--ink); background: rgba(255,255,255,0.72); font-size: 0.62rem; }
+.duplicate-suggestions a:hover { color: var(--teal); }
+.duplicate-suggestions a strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.duplicate-suggestions a small { grid-column: 2; color: var(--ink-faint); font-size: 0.55rem; }
 .privacy-guidance { display: flex; margin: 4px 0 14px; align-items: flex-start; gap: 6px; color: var(--ink-faint); font-size: 0.62rem; line-height: 1.46; }
 .privacy-guidance svg { flex: 0 0 auto; margin-top: 2px; color: var(--orange); }
 .report-error { margin: 2px 0 12px; padding: 8px 9px; border-left: 2px solid var(--orange); color: #82391f; background: var(--orange-soft); font-size: 0.66rem; line-height: 1.45; }
+.draft-actions { display: flex; margin: 0 0 7px; flex-wrap: wrap; gap: 7px; }
+.draft-actions button { padding: 0; border: 0; color: var(--teal); background: none; font-size: 0.61rem; font-weight: 760; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.draft-notice { margin: 0 0 10px; color: var(--ink-faint); font-size: 0.61rem; }
 .report-submit { width: 100%; min-height: 42px; font-size: 0.76rem; }
 .report-submit:disabled { opacity: 0.65; cursor: wait; }
 .report-panel-footer { display: flex; padding: 11px 15px; align-items: flex-start; gap: 7px; border-top: 1px solid var(--line); color: var(--ink-faint); background: var(--surface-green); font-size: 0.61rem; line-height: 1.45; }

@@ -36,6 +36,26 @@ locals {
       route_key = "GET /incidents/{id}/evidence"
       auth      = "NONE"
     }
+    confirm_incident = {
+      handler   = "handlers.confirm_incident.lambda_handler"
+      route_key = "POST /incidents/{id}/confirm"
+      auth      = "JWT"
+    }
+    follow_incident = {
+      handler   = "handlers.follow_incident.lambda_handler"
+      route_key = "POST /incidents/{id}/follow"
+      auth      = "JWT"
+    }
+    list_following = {
+      handler   = "handlers.list_following.lambda_handler"
+      route_key = "GET /me/following"
+      auth      = "JWT"
+    }
+    get_insights = {
+      handler   = "handlers.get_insights.lambda_handler"
+      route_key = "GET /insights"
+      auth      = "NONE"
+    }
     list_moderation_incidents = {
       handler   = "handlers.list_moderation_incidents.lambda_handler"
       route_key = "GET /moderation/incidents"

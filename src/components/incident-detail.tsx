@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, Clock3, MapPinned, ShieldCheck } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
+import { IncidentEngagement } from "@/components/incident-engagement";
 import { categoryMeta, incidentFromApi, type ApiIncident, type Incident, type StatusEvent } from "@/data/incidents";
 
 type IncidentDetailProps = { id: string };
@@ -75,10 +76,12 @@ export function IncidentDetail({ id }: IncidentDetailProps) {
             <p className="signal-label">Community report · {incident.id}</p>
             <h1>{incident.title}</h1>
             <p>{incident.summary}</p>
-            <div className="incident-summary-meta"><span>📍 {incident.area}</span><span>⚡ {incident.urgency} priority</span><span>💬 {incident.updates} update{incident.updates === 1 ? "" : "s"}</span></div>
+            <div className="incident-summary-meta"><span>📍 {incident.area}</span><span>⚡ {incident.urgency} priority</span><span>💬 {incident.updates} update{incident.updates === 1 ? "" : "s"}</span><span>🤝 {incident.confirmations || 0} confirmation{incident.confirmations === 1 ? "" : "s"}</span><span>🔔 {incident.followers || 0} follower{incident.followers === 1 ? "" : "s"}</span></div>
           </section>
           <aside className="incident-guidance"><ShieldCheck size={20} /><h2>Report status is not a promise of an official response.</h2><p>CivicSignal helps people follow what has been reported. For immediate danger, contact local emergency services.</p></aside>
         </div>
+
+        <IncidentEngagement incidentId={incident.id} />
 
         <div className="incident-detail-grid">
           <section className="incident-timeline-card">

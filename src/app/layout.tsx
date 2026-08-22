@@ -5,6 +5,8 @@ import "./globals.css";
 import "./auth.css";
 import "./incident.css";
 import "./moderator.css";
+import "./insights.css";
+import "./following.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://civicsignal.vercel.app";
 

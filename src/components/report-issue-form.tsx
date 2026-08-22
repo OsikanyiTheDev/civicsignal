@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { CheckCircle2, ImagePlus, LogIn, Send, ShieldAlert } from "lucide-react";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   categoryMeta,
@@ -14,6 +15,7 @@ import {
 
 type ReportIssueFormProps = {
   apiBaseUrl?: string;
+  existingIncidents?: Incident[];
   onIncidentCreated?: (incident: Incident) => void;
 };
 
@@ -39,8 +41,10 @@ type AuthState = {
 const ACCEPTED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_EVIDENCE_BYTES = 5 * 1024 * 1024;
 
-export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFormProps) {
+export function ReportIssueForm({ apiBaseUrl, existingIncidents = [], onIncidentCreated }: ReportIssueFormProps) {
   const [category, setCategory] = useState<IncidentCategory>("Drainage");
+  const [titleDraft, setTitleDraft] = useState("");
+  const [areaDraft, setAreaDraft] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submittedWithPhoto, setSubmittedWithPhoto] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -51,7 +55,20 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
   const [exactLocationPublicConsent, setExactLocationPublicConsent] = useState(false);
   const [locationMessage, setLocationMessage] = useState("");
   const [isLocating, setIsLocating] = useState(false);
+  const [draftNotice, setDraftNotice] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
   const isAwsConnected = Boolean(apiBaseUrl);
+  const potentialDuplicates = useMemo(() => {
+    const normalizedArea = areaDraft.trim().toLowerCase();
+    const titleWords = titleDraft.toLowerCase().split(/\s+/).filter((word) => word.length > 3);
+    if (!normalizedArea && titleWords.length < 2) return [];
+    return existingIncidents.filter((incident) => {
+      if (incident.category !== category) return false;
+      const areaMatch = normalizedArea.length > 2 && incident.area.toLowerCase().includes(normalizedArea);
+      const titleMatch = titleWords.filter((word) => incident.title.toLowerCase().includes(word)).length >= 2;
+      return areaMatch || titleMatch;
+    }).slice(0, 3);
+  }, [areaDraft, category, existingIncidents, titleDraft]);
 
   useEffect(() => {
     fetch("/api/auth/session")
@@ -84,6 +101,43 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 },
     );
+  }
+
+  function saveDraft() {
+    const form = formRef.current;
+    if (!form) return;
+    const fields = new FormData(form);
+    const draft = {
+      title: titleDraft,
+      area: areaDraft,
+      summary: String(fields.get("summary") || ""),
+      category,
+      urgency: String(fields.get("urgency") || "Medium"),
+    };
+    window.localStorage.setItem("civicsignal-report-draft", JSON.stringify(draft));
+    setDraftNotice("Draft saved on this device.");
+  }
+
+  function restoreDraft() {
+    try {
+      const raw = window.localStorage.getItem("civicsignal-report-draft");
+      if (!raw) {
+        setDraftNotice("No saved draft was found on this device.");
+        return;
+      }
+      const draft = JSON.parse(raw) as { title?: string; area?: string; summary?: string; category?: IncidentCategory; urgency?: string };
+      setTitleDraft(draft.title || "");
+      setAreaDraft(draft.area || "");
+      if (draft.category) setCategory(draft.category);
+      const form = formRef.current;
+      const summaryInput = form?.elements.namedItem("summary") as HTMLTextAreaElement | null;
+      const urgencyInput = form?.elements.namedItem("urgency") as HTMLSelectElement | null;
+      if (summaryInput) summaryInput.value = draft.summary || "";
+      if (urgencyInput && draft.urgency) urgencyInput.value = draft.urgency;
+      setDraftNotice("Draft restored. Review it before sending.");
+    } catch {
+      setDraftNotice("The saved draft could not be restored.");
+    }
   }
 
   async function uploadPrivateEvidence(upload: PresignedPost, file: File) {
@@ -191,6 +245,8 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
       }
 
       formElement.reset();
+      setTitleDraft("");
+      setAreaDraft("");
       setEvidenceFile(null);
       setSelectedLocation(null);
       setExactLocationPublicConsent(false);
@@ -220,7 +276,7 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
   const photoEvidenceReady = isAwsConnected && auth?.available && auth.authenticated;
 
   return (
-    <form className="report-form" onSubmit={submit}>
+    <form className="report-form" ref={formRef} onSubmit={submit}>
       <div className="report-form-heading">
         <div>
           <p className="signal-label">Create a community signal</p>
@@ -238,7 +294,7 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
         </label>
         <label>
           <span>Area or landmark</span>
-          <input name="area" required minLength={2} maxLength={80} placeholder="For example: East Market" />
+          <input name="area" required minLength={2} maxLength={80} value={areaDraft} onChange={(event) => setAreaDraft(event.target.value)} placeholder="For example: East Market" />
         </label>
       </div>
 
@@ -254,8 +310,10 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
 
       <label>
         <span>Short issue title</span>
-        <input name="title" required minLength={8} maxLength={110} placeholder="For example: Blocked drainage near pedestrian crossing" />
+        <input name="title" required minLength={8} maxLength={110} value={titleDraft} onChange={(event) => setTitleDraft(event.target.value)} placeholder="For example: Blocked drainage near pedestrian crossing" />
       </label>
+
+      {potentialDuplicates.length ? <div className="duplicate-suggestions"><span>🔁 Possible related reports</span><p>Before creating a new report, check whether one of these already describes the same issue.</p>{potentialDuplicates.map((incident) => <Link href={`/incidents/${incident.id}`} key={incident.id}>{incident.emoji} <strong>{incident.title}</strong><small>{incident.area} · {incident.status}</small></Link>)}</div> : null}
 
       <label>
         <span>What is happening?</span>
@@ -286,6 +344,8 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
 
       <p className="privacy-guidance"><ShieldAlert size={15} /> CivicSignal is not an emergency service. For immediate danger, contact local emergency services. Do not submit medical, financial, or sensitive personal information.</p>
       {error ? <p className="report-error" role="alert">⚠️ {error}</p> : null}
+      <div className="draft-actions"><button type="button" onClick={saveDraft}>Save draft on this device</button><button type="button" onClick={restoreDraft}>Restore saved draft</button></div>
+      {draftNotice ? <p className="draft-notice" role="status">💾 {draftNotice}</p> : null}
       <button className="civic-button report-submit" type="submit" disabled={isSending}>
         <Send size={16} /> {isSending ? "Sending report…" : isAwsConnected ? "Send report" : "Add practice report"}
       </button>

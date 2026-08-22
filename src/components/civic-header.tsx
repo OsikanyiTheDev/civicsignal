@@ -7,10 +7,10 @@ import { useState } from "react";
 import { AuthControl } from "@/components/auth-control";
 
 const navItems = [
-  ["Live board", "#board"],
-  ["How it works", "#how-it-works"],
-  ["Architecture", "#architecture"],
-  ["Safety", "#safety"],
+  ["Live board", "/#board"],
+  ["How it works", "/#how-it-works"],
+  ["Insights", "/insights"],
+  ["Safety", "/#safety"],
 ] as const;
 
 export function CivicHeader() {
@@ -28,7 +28,7 @@ export function CivicHeader() {
         </Link>
 
         <nav className="civic-desktop-nav" aria-label="Primary navigation">
-          {navItems.map(([label, href]) => <a key={href} href={href}>{label}</a>)}
+          {navItems.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
         </nav>
 
         <div className="civic-nav-actions">
@@ -49,9 +49,9 @@ export function CivicHeader() {
       <div className={`civic-mobile-nav ${open ? "is-open" : ""}`} id="civic-mobile-navigation">
         <nav className="shell" aria-label="Mobile navigation">
           {navItems.map(([label, href]) => (
-            <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
+            <Link key={href} href={href} onClick={() => setOpen(false)}>{label}</Link>
           ))}
-          <a href="#report" onClick={() => setOpen(false)}>Report an issue ↗</a>
+          <Link href="/#report" onClick={() => setOpen(false)}>Report an issue ↗</Link>
         </nav>
       </div>
     </header>

@@ -15,6 +15,16 @@
 .incident-guidance > svg { color: var(--amber); }
 .incident-guidance h2 { margin: 16px 0 9px; font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif; font-size: 1.12rem; line-height: 1.2; }
 .incident-guidance p { margin: 0; font-size: 0.71rem; line-height: 1.55; }
+.incident-engagement { display: flex; margin-top: 14px; padding: 15px 17px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 13px; border: 1px solid rgba(8,123,120,0.22); border-radius: 13px 4px 13px 4px; background: linear-gradient(120deg, var(--teal-soft), var(--surface)); }
+.incident-engagement > div:first-child { display: grid; gap: 2px; }
+.incident-engagement strong { color: var(--ink); font-size: 0.78rem; }
+.incident-engagement span { color: var(--ink-faint); font-size: 0.66rem; }
+.engagement-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+.engagement-actions button { display: inline-flex; min-height: 33px; padding: 0 9px; align-items: center; gap: 5px; border: 1px solid var(--line-strong); border-radius: 6px 3px 6px 3px; color: var(--teal); background: var(--surface); font-size: 0.65rem; font-weight: 760; cursor: pointer; }
+.engagement-actions button:hover { background: var(--teal-soft); }
+.engagement-actions button:disabled { opacity: 0.6; cursor: wait; }
+.incident-engagement > p { width: 100%; margin: 0; color: var(--teal); font-size: 0.66rem; }
+.engagement-loading { display: inline-flex; margin-top: 14px; align-items: center; gap: 6px; color: var(--ink-faint); font-size: 0.66rem; }
 .incident-detail-grid { display: grid; margin-top: 14px; grid-template-columns: minmax(0, 1fr) minmax(0, 0.78fr); gap: 14px; }
 .incident-timeline-card, .incident-location-card, .incident-evidence-card { padding: 23px; border: 1px solid var(--line); border-radius: 18px 5px 18px 5px; background: var(--surface); }
 .incident-timeline-card { grid-row: span 2; }

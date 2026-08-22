@@ -39,11 +39,19 @@ def groups_from_event(event: dict[str, Any]) -> set[str]:
     return set()
 
 
+def require_authenticated(event: dict[str, Any]) -> str:
+    subject = str(jwt_claims(event).get("sub", ""))
+    if not subject:
+        raise AuthorizationError("A verified CivicSignal sign-in is required for this action.")
+    return subject
+
+
 def require_any_group(event: dict[str, Any], allowed_groups: set[str]) -> str:
+    subject = require_authenticated(event)
     groups = groups_from_event(event)
     if not groups.intersection(allowed_groups):
         raise AuthorizationError("This action requires a CivicSignal operational role.")
-    return str(jwt_claims(event).get("sub", ""))
+    return subject
 
 
 def require_moderator(event: dict[str, Any]) -> str:
