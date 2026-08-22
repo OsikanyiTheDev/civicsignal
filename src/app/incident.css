@@ -7,6 +7,7 @@
 .incident-summary { --accent: var(--teal); padding: 29px; border: 1px solid var(--line); border-top: 4px solid var(--accent); border-radius: 23px 7px 23px 7px; background: var(--surface); box-shadow: var(--shadow-small); }
 .incident-summary-top { display: flex; margin-bottom: 19px; align-items: center; justify-content: space-between; }
 .incident-category-icon { display: grid; width: 46px; height: 46px; place-items: center; border-radius: 14px 4px 14px 4px; background: color-mix(in srgb, var(--accent) 12%, white); font-size: 1.3rem; }
+.detail-sample-badge { margin-bottom: 9px; }
 .incident-summary h1 { margin-bottom: 13px; font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif; font-size: clamp(2rem, 4vw, 3.55rem); }
 .incident-summary > p:not(.signal-label) { max-width: 650px; margin-bottom: 20px; font-size: 0.94rem; line-height: 1.68; }
 .incident-summary-meta { display: flex; padding-top: 15px; flex-wrap: wrap; gap: 7px; border-top: 1px solid var(--line); }

@@ -38,6 +38,7 @@ export type Incident = {
   updates: number;
   confirmations?: number;
   followers?: number;
+  isSample?: boolean;
   location?: PublicLocation;
   statusHistory?: StatusEvent[];
 };
@@ -62,6 +63,7 @@ export type ApiIncident = {
   updates?: number | string;
   confirmations?: number | string;
   followers?: number | string;
+  sample_data?: boolean;
   created_at?: string;
   updated_at?: string;
   public_latitude?: number | string;
@@ -98,6 +100,7 @@ export function incidentFromApi(incident: ApiIncident): Incident {
     updates: Number(incident.updates ?? 1),
     confirmations: Number(incident.confirmations ?? 0),
     followers: Number(incident.followers ?? 0),
+    isSample: incident.sample_data === true,
     emoji: categoryMeta[incident.category]?.emoji ?? "📍",
     reportedAt: `${formattedTime} · Community report`,
     location: hasPublicLocation ? {

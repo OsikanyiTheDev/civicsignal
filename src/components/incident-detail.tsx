@@ -74,6 +74,7 @@ export function IncidentDetail({ id }: IncidentDetailProps) {
           <section className={`incident-summary accent-${meta.accent}`}>
             <div className="incident-summary-top"><span className="incident-category-icon">{incident.emoji}</span><span className={`status-badge status-${incident.status.toLowerCase().replaceAll(" ", "-")}`}>{incident.status}</span></div>
             <p className="signal-label">Community report · {incident.id}</p>
+            {incident.isSample ? <span className="sample-badge detail-sample-badge">Illustrative sample scenario</span> : null}
             <h1>{incident.title}</h1>
             <p>{incident.summary}</p>
             <div className="incident-summary-meta"><span>📍 {incident.area}</span><span>⚡ {incident.urgency} priority</span><span>💬 {incident.updates} update{incident.updates === 1 ? "" : "s"}</span><span>🤝 {incident.confirmations || 0} confirmation{incident.confirmations === 1 ? "" : "s"}</span><span>🔔 {incident.followers || 0} follower{incident.followers === 1 ? "" : "s"}</span></div>

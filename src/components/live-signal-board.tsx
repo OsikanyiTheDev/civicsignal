@@ -92,7 +92,7 @@ export function LiveSignalBoard() {
 
           <div className="signal-board-title-row">
             <span>Showing {visibleIncidents.length} signal{visibleIncidents.length === 1 ? "" : "s"}</span>
-            <span>{boardMode === "aws" ? "📡 Current community reports" : boardMode === "loading" ? "Loading reports…" : boardMode === "fallback" ? "⚠️ Live reports are temporarily unavailable · sample reports shown" : "Sample reports · practice mode"}</span>
+            <span>{boardMode === "aws" ? incidents.some((incident) => incident.isSample) ? "📚 Illustrative sample scenarios" : "📡 Current community reports" : boardMode === "loading" ? "Loading reports…" : boardMode === "fallback" ? "⚠️ Live reports are temporarily unavailable · sample reports shown" : "Sample reports · practice mode"}</span>
           </div>
           <div className="signal-list">
             {visibleIncidents.map((incident) => {
@@ -102,6 +102,7 @@ export function LiveSignalBoard() {
                   <div className="signal-card-icon" aria-hidden="true">{incident.emoji}</div>
                   <div className="signal-card-main">
                     <div className="signal-card-meta"><span>{incident.id}</span><span>{incident.reportedAt}</span></div>
+                    {incident.isSample ? <span className="sample-badge">Illustrative sample</span> : null}
                     <h3>{incident.title}</h3>
                     <p>{incident.summary}</p>
                     <div className="signal-card-tags"><span>{incident.category}</span><span>📍 {incident.area}</span><span>💬 {incident.updates} update{incident.updates === 1 ? "" : "s"}</span></div>

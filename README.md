@@ -80,6 +80,12 @@ civicsignal/
 └── .github/workflows/            # CI quality gates
 ```
 
+## Illustrative sample data
+
+The development board can be reset to five clearly labelled fictional sample scenarios, including three generated image examples. See [docs/SEEDING.md](docs/SEEDING.md).
+
+> The seeding script deletes current development records. Do not run it after accepting real community reports.
+
 ## Local development
 
 ```bash

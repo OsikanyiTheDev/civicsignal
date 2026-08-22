@@ -217,6 +217,7 @@ section[id] { scroll-margin-top: 84px; }
 .signal-card-icon { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 11px 4px 11px 4px; background: color-mix(in srgb, var(--accent) 13%, white); font-size: 1.1rem; }
 .signal-card-main { min-width: 0; }
 .signal-card-meta { display: flex; margin-bottom: 5px; justify-content: space-between; gap: 10px; color: var(--ink-faint); font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.54rem; }
+.sample-badge { display: inline-flex; width: max-content; margin: 1px 0 5px; padding: 3px 5px; border-radius: 4px; color: var(--violet); background: var(--violet-soft); font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.5rem; font-weight: 760; letter-spacing: 0.03em; text-transform: uppercase; }
 .signal-card h3 { margin-bottom: 5px; font-size: 0.85rem; line-height: 1.27; }
 .signal-card p { display: -webkit-box; overflow: hidden; margin-bottom: 9px; font-size: 0.7rem; line-height: 1.48; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .signal-card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
