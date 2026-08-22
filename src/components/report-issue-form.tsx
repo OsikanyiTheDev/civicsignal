@@ -84,8 +84,8 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
         <CheckCircle2 size={27} />
         <div>
           <p className="signal-label">Signal received</p>
-          <h3>{isAwsConnected ? "Your report reached the CivicSignal AWS API." : "Your demonstration report is on the board."}</h3>
-          <p>{isAwsConnected ? "The report is stored with a Submitted status and routed to the configured operational notification path. It still requires moderation before any public response is implied." : "This local preview does not send a public alert. The AWS deployment will validate, store, moderate and notify from the real API."}</p>
+          <h3>{isAwsConnected ? "Your report has been received." : "Your practice report is now on the board."}</h3>
+          <p>{isAwsConnected ? "Your report is now marked Submitted and can be followed on the board. A Submitted status means it has been received; it does not imply an official response or resolution." : "Practice mode lets you explore how reporting works without sending a live community report."}</p>
           <button className="text-action" type="button" onClick={() => setSubmitted(false)}>Submit another report →</button>
         </div>
       </div>
@@ -99,7 +99,7 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
           <p className="signal-label">Create a community signal</p>
           <h3>Report an issue without exposing unnecessary personal data.</h3>
         </div>
-        <span className="demo-pill">{isAwsConnected ? "AWS connected" : "Demo mode"}</span>
+        <span className="demo-pill">{isAwsConnected ? "Ready to submit" : "Practice mode"}</span>
       </div>
 
       <div className="report-form-grid">
@@ -135,15 +135,15 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
           </select>
         </label>
         <label className="upload-placeholder">
-          <span>Photo evidence <small>{isAwsConnected ? "Trusted workflow only" : "Optional in AWS deployment"}</small></span>
-          <div><ImagePlus size={17} /> Private S3 upload path {isAwsConnected ? "protected" : "planned"}</div>
+          <span>Photo evidence <small>{isAwsConnected ? "Coming next" : "Available after public launch"}</small></span>
+          <div><ImagePlus size={17} /> Photo evidence is reviewed privately</div>
         </label>
       </div>
 
       <p className="privacy-guidance"><ShieldAlert size={15} /> CivicSignal is not an emergency service. For immediate danger, contact local emergency services. Do not submit medical, financial, or sensitive personal information.</p>
       {error ? <p className="report-error" role="alert">⚠️ {error}</p> : null}
       <button className="civic-button report-submit" type="submit" disabled={isSending}>
-        <Send size={16} /> {isSending ? "Sending signal…" : isAwsConnected ? "Send to AWS API" : "Add demonstration report"}
+        <Send size={16} /> {isSending ? "Sending report…" : isAwsConnected ? "Send report" : "Add practice report"}
       </button>
     </form>
   );

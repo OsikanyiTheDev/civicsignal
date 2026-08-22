@@ -70,7 +70,7 @@ export function LiveSignalBoard() {
     <section className="signal-workspace" id="board" aria-label="Community signal board">
       <div className="signal-workspace-header">
         <div>
-          <p className="signal-label"><span className="pulse-dot" /> Live community board</p>
+          <p className="signal-label"><span className="pulse-dot" /> Community issue board</p>
           <h2>See the signals. Understand the status. Keep the response visible.</h2>
         </div>
         <div className="status-snapshot" aria-label="Incident status summary">
@@ -91,7 +91,7 @@ export function LiveSignalBoard() {
 
           <div className="signal-board-title-row">
             <span>Showing {visibleIncidents.length} signal{visibleIncidents.length === 1 ? "" : "s"}</span>
-            <span>{boardMode === "aws" ? "☁️ Live AWS development data" : boardMode === "loading" ? "Connecting to AWS API…" : boardMode === "fallback" ? "⚠️ API unavailable · demo data shown" : "Public demo data · no live incident feed"}</span>
+            <span>{boardMode === "aws" ? "📡 Current community reports" : boardMode === "loading" ? "Loading reports…" : boardMode === "fallback" ? "⚠️ Live reports are temporarily unavailable · sample reports shown" : "Sample reports · practice mode"}</span>
           </div>
           <div className="signal-list">
             {visibleIncidents.map((incident) => {

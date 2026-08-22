@@ -3,7 +3,6 @@ import {
   ArrowUpRight,
   CircleAlert,
   CloudLightning,
-  Github,
   HeartHandshake,
   LockKeyhole,
   MapPinned,
@@ -14,8 +13,6 @@ import {
 import { CivicHeader } from "@/components/civic-header";
 import { LiveSignalBoard } from "@/components/live-signal-board";
 import { ResponseArchitecture } from "@/components/response-architecture";
-
-const githubRepository = "https://github.com/OsikanyiTheDev/civicsignal";
 
 export default function HomePage() {
   return (
@@ -44,7 +41,7 @@ export default function HomePage() {
               <div className="signal-orbit orbit-one" aria-hidden="true" />
               <div className="signal-orbit orbit-two" aria-hidden="true" />
               <div className="signal-core-card">
-                <div className="core-card-top"><span>📍 COMMUNITY SIGNAL</span><span className="demo-pill">prototype</span></div>
+                <div className="core-card-top"><span>📍 COMMUNITY SIGNAL</span><span className="demo-pill">community board</span></div>
                 <div className="core-card-icon"><MapPinned size={36} /></div>
                 <h2>Reported. Routed. Visible.</h2>
                 <p>A safer path from a local observation to a trackable response status.</p>
@@ -54,17 +51,17 @@ export default function HomePage() {
               <div className="floating-signal signal-road"><span>🚧</span><strong>Road safety</strong><small>Verified</small></div>
               <div className="floating-signal signal-light"><span>💡</span><strong>Streetlight</strong><small>In progress</small></div>
               <div className="floating-signal signal-waste"><span>♻️</span><strong>Waste</strong><small>Resolved</small></div>
-              <div className="hero-visual-foot"><CloudLightning size={15} /> Serverless-ready · public status · private evidence</div>
+              <div className="hero-visual-foot"><CloudLightning size={15} /> Community reporting · clear status · private evidence</div>
             </div>
           </div>
         </section>
 
         <section className="civic-intro-strip">
           <div className="shell civic-intro-grid">
-            <p><Sparkles size={17} /> <strong>A practical civic prototype.</strong> It structures community reports without pretending to be a government agency or emergency service.</p>
-            <span>🌍 Designed for any community</span>
-            <span>🔐 Privacy-aware by design</span>
-            <span>🧱 Infrastructure as Code</span>
+            <p><Sparkles size={17} /> <strong>A community information tool.</strong> Share local concerns, follow status updates, and help make issues easier to see.</p>
+            <span>🌍 Built for local communities</span>
+            <span>🔐 Report with care</span>
+            <span>📡 Clear status updates</span>
           </div>
         </section>
 
@@ -90,9 +87,9 @@ export default function HomePage() {
         <section className="section architecture-section">
           <div className="shell">
             <div className="section-heading centered-heading">
-              <p className="signal-label">Cloud architecture</p>
-              <h2>A civic tool deserves reliable infrastructure. 🧱</h2>
-              <p className="section-lead">The frontend is demonstrable now. The accompanying Terraform and Lambda implementation defines the AWS path for a secure, observable, serverless deployment.</p>
+              <p className="signal-label">Your report journey</p>
+              <h2>One report can create a clearer shared picture. 🧭</h2>
+              <p className="section-lead">CivicSignal helps people share an observation, understand what happens next, and follow the status without relying on scattered messages.</p>
             </div>
             <ResponseArchitecture />
           </div>
@@ -109,17 +106,17 @@ export default function HomePage() {
             <div className="safety-card">
               <LockKeyhole size={23} />
               <h3>Private evidence</h3>
-              <p>Planned S3 uploads use encryption, private buckets, size limits, and pre-signed upload URLs.</p>
+              <p>Any photo evidence is kept private for review. It is not displayed publicly beside a community report.</p>
             </div>
             <div className="safety-card">
               <ShieldCheck size={23} />
-              <h3>Abuse-aware design</h3>
-              <p>Validation, rate controls, moderation queues, and WAF are part of the production architecture.</p>
+              <h3>Respectful reporting</h3>
+              <p>Use clear, factual descriptions. Reports should focus on the issue, not on private details about people.</p>
             </div>
             <div className="safety-card">
               <CircleAlert size={23} />
               <h3>Clear limits</h3>
-              <p>It does not replace emergency services, local authorities, or official public-safety guidance.</p>
+              <p>CivicSignal is a community information tool. It does not replace emergency services or official local guidance.</p>
             </div>
           </div>
         </section>
@@ -127,13 +124,13 @@ export default function HomePage() {
         <section className="civic-cta">
           <div className="shell civic-cta-inner">
             <div>
-              <p className="signal-label">Build in public</p>
-              <h2>CivicSignal is being built as an open, inspectable cloud engineering project.</h2>
-              <p>See the Terraform, Lambda handlers, security decisions, CI workflow, and future implementation notes in the repository.</p>
+              <p className="signal-label">Take part</p>
+              <h2>Help make the places around you easier to understand. 🌱</h2>
+              <p>Share a clear local observation, avoid sensitive personal information, and check back for updates as reports move through the board.</p>
             </div>
             <div className="civic-cta-actions">
-              <a className="civic-button" href={githubRepository} target="_blank" rel="noreferrer"><Github size={17} /> Explore the code</a>
-              <a className="civic-button civic-button-ghost" href="#report">Create a demo signal <ArrowUpRight size={17} /></a>
+              <a className="civic-button" href="#report">Report a local issue <ArrowUpRight size={17} /></a>
+              <a className="civic-button civic-button-ghost" href="#how-it-works">How it works <ArrowUpRight size={17} /></a>
             </div>
           </div>
         </section>
@@ -142,8 +139,8 @@ export default function HomePage() {
       <footer className="civic-footer">
         <div className="shell civic-footer-grid">
           <div><strong>CivicSignal</strong><span>Community Infrastructure Incident & Response Hub</span></div>
-          <p>Built by <a href="https://osikanyi-cloud-portfolio.vercel.app/" target="_blank" rel="noreferrer">Osikanyi Essandoh</a> · Cloud Engineer</p>
-          <a href={githubRepository} target="_blank" rel="noreferrer">GitHub ↗</a>
+          <p>Community information tool · Not an emergency service</p>
+          <a href="#safety">Report safely ↗</a>
         </div>
       </footer>
     </>

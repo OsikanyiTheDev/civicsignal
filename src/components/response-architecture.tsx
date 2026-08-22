@@ -1,18 +1,18 @@
-import { BellRing, Cloud, Database, FileUp, Gauge, ShieldCheck, Workflow } from "lucide-react";
+import { BellRing, CheckCircle2, FileText, ImagePlus, MessageCircleMore, ShieldCheck } from "lucide-react";
 
-const layers = [
-  { label: "Community", detail: "Public report · status lookup", icon: Cloud, emoji: "🧑🏾‍🤝‍🧑🏽", tone: "cyan" },
-  { label: "Protect", detail: "WAF · abuse controls · validation", icon: ShieldCheck, emoji: "🛡️", tone: "violet" },
-  { label: "Respond", detail: "API Gateway · Lambda", icon: Workflow, emoji: "⚡", tone: "orange" },
-  { label: "Record", detail: "DynamoDB · encrypted S3 evidence", icon: Database, emoji: "🗃️", tone: "blue" },
-  { label: "Route", detail: "EventBridge · SQS · SNS", icon: BellRing, emoji: "📣", tone: "green" },
-  { label: "Observe", detail: "CloudWatch logs · alarms", icon: Gauge, emoji: "📡", tone: "cyan" },
+const stages = [
+  { label: "Share", detail: "Describe the issue and general area", icon: MessageCircleMore, emoji: "🗣️", tone: "cyan" },
+  { label: "Check", detail: "Reports enter a review path", icon: ShieldCheck, emoji: "🔎", tone: "violet" },
+  { label: "Track", detail: "Follow Submitted, Verified or Resolved", icon: CheckCircle2, emoji: "📍", tone: "orange" },
+  { label: "Protect", detail: "Evidence stays private while reviewed", icon: ImagePlus, emoji: "🔐", tone: "blue" },
+  { label: "Update", detail: "Clear status changes stay visible", icon: BellRing, emoji: "📡", tone: "green" },
+  { label: "Learn", detail: "Patterns can guide better follow-up", icon: FileText, emoji: "🌱", tone: "cyan" },
 ];
 
 export function ResponseArchitecture() {
   return (
     <div className="response-architecture" id="architecture">
-      <div className="architecture-kicker"><FileUp size={16} /> Implementation-ready AWS design</div>
+      <div className="architecture-kicker"><MessageCircleMore size={16} /> What happens after you report</div>
       <svg className="response-architecture-lines" viewBox="0 0 1060 250" preserveAspectRatio="none" aria-hidden="true">
         <path d="M83 119 H963" />
         <path d="M253 119 V192" />
@@ -25,7 +25,7 @@ export function ResponseArchitecture() {
         <circle cx="963" cy="119" r="4" />
       </svg>
       <div className="architecture-layer-grid">
-        {layers.map(({ label, detail, icon: Icon, emoji, tone }, index) => (
+        {stages.map(({ label, detail, icon: Icon, emoji, tone }, index) => (
           <article className={`architecture-layer tone-${tone}`} key={label}>
             <span className="architecture-order">0{index + 1}</span>
             <div className="architecture-layer-icon"><Icon size={19} /></div>
@@ -34,7 +34,7 @@ export function ResponseArchitecture() {
           </article>
         ))}
       </div>
-      <div className="architecture-note"><span>🔐</span> Designed to minimise personal data, keep evidence private, and make response status visible without promising official intervention.</div>
+      <div className="architecture-note"><span>🧭</span> CivicSignal makes a report easier to follow. It does not promise that every report will receive an official response.</div>
     </div>
   );
 }
