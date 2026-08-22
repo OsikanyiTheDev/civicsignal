@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ArrowUpRight, CheckCheck, Filter, MessageCircleMore, Search, SlidersHorizontal } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -108,7 +109,7 @@ export function LiveSignalBoard() {
                   <div className="signal-card-side">
                     <span className={`status-badge status-${incident.status.toLowerCase().replaceAll(" ", "-")}`}>{incident.status}</span>
                     <span className={`urgency urgency-${incident.urgency.toLowerCase()}`}>{incident.urgency}</span>
-                    <button type="button" aria-label={`View ${incident.id} details`} title="Details route will be connected to the AWS API"><ArrowUpRight size={17} /></button>
+                    <Link href={`/incidents/${incident.id}`} aria-label={`View ${incident.id} details`} title="View report details"><ArrowUpRight size={17} /></Link>
                   </div>
                 </article>
               );

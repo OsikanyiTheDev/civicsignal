@@ -12,6 +12,18 @@ export const incidentStatuses = ["Submitted", "Verified", "In progress", "Resolv
 export type IncidentCategory = (typeof incidentCategories)[number];
 export type IncidentStatus = (typeof incidentStatuses)[number];
 
+export type StatusEvent = {
+  status: IncidentStatus;
+  at: string;
+  note: string;
+};
+
+export type PublicLocation = {
+  latitude: number;
+  longitude: number;
+  precision: "approximate";
+};
+
 export type Incident = {
   id: string;
   title: string;
@@ -23,6 +35,8 @@ export type Incident = {
   urgency: "Low" | "Medium" | "High";
   emoji: string;
   updates: number;
+  location?: PublicLocation;
+  statusHistory?: StatusEvent[];
 };
 
 export const categoryMeta: Record<IncidentCategory, { emoji: string; accent: string }> = {
@@ -45,6 +59,10 @@ export type ApiIncident = {
   updates?: number | string;
   created_at?: string;
   updated_at?: string;
+  public_latitude?: number | string;
+  public_longitude?: number | string;
+  location_precision?: "approximate";
+  status_history?: StatusEvent[];
 };
 
 export function incidentFromApi(incident: ApiIncident): Incident {
@@ -59,6 +77,10 @@ export function incidentFromApi(incident: ApiIncident): Incident {
       }).format(new Date(reportedAt))
     : "Recently updated";
 
+  const latitude = incident.public_latitude === undefined ? undefined : Number(incident.public_latitude);
+  const longitude = incident.public_longitude === undefined ? undefined : Number(incident.public_longitude);
+  const hasApproximateLocation = typeof latitude === "number" && Number.isFinite(latitude) && typeof longitude === "number" && Number.isFinite(longitude) && incident.location_precision === "approximate";
+
   return {
     id: incident.id,
     title: incident.title,
@@ -69,7 +91,9 @@ export function incidentFromApi(incident: ApiIncident): Incident {
     urgency: incident.urgency,
     updates: Number(incident.updates ?? 1),
     emoji: categoryMeta[incident.category]?.emoji ?? "📍",
-    reportedAt: `${formattedTime} · AWS`,
+    reportedAt: `${formattedTime} · Community report`,
+    location: hasApproximateLocation ? { latitude: latitude as number, longitude: longitude as number, precision: "approximate" } : undefined,
+    statusHistory: incident.status_history,
   };
 }
 

@@ -39,7 +39,14 @@ def lambda_handler(event: dict[str, Any], _context: Any) -> dict[str, Any]:
         "updated_at": now,
         "GSI1PK": "STATUS#Submitted",
         "GSI1SK": f"{now}#{incident_id}",
+        "location_precision": payload["location_precision"],
+        "status_history": [
+            {"status": "Submitted", "at": now, "note": "Report received"},
+        ],
     }
+    if payload["location_precision"] == "approximate":
+        incident["public_latitude"] = payload["public_latitude"]
+        incident["public_longitude"] = payload["public_longitude"]
 
     try:
         put_incident(incident)

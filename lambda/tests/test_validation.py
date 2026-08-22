@@ -46,6 +46,35 @@ class IncidentValidationTests(unittest.TestCase):
                 }
             )
 
+    def test_rounds_approximate_location_before_storage(self):
+        result = validate_incident_payload(
+            {
+                "title": "Blocked drainage near crossing",
+                "area": "Central ward",
+                "summary": "Standing water is blocking a busy pedestrian crossing after rainfall.",
+                "category": "Drainage",
+                "latitude": 5.6037168,
+                "longitude": -0.1869644,
+                "location_precision": "approximate",
+            }
+        )
+        self.assertEqual(result["public_latitude"], 5.6)
+        self.assertEqual(result["public_longitude"], -0.19)
+
+    def test_rejects_coordinates_without_approximate_consent(self):
+        with self.assertRaises(ValidationError):
+            validate_incident_payload(
+                {
+                    "title": "Blocked drainage near crossing",
+                    "area": "Central ward",
+                    "summary": "Standing water is blocking a busy pedestrian crossing after rainfall.",
+                    "category": "Drainage",
+                    "latitude": 5.6,
+                    "longitude": -0.19,
+                    "location_precision": "area_only",
+                }
+            )
+
     def test_accepts_known_status(self):
         self.assertEqual(validate_status({"status": "In progress"}), "In progress")
 

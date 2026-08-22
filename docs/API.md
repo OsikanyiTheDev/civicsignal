@@ -23,6 +23,8 @@ Validation constraints:
 - `summary`: 20–600 characters
 - category: Water, Drainage, Waste, Streetlight, Road safety, or Other
 - urgency: Low, Medium, or High
+- optional `location_precision`: `area_only` or `approximate`
+- optional `latitude` and `longitude` only when `location_precision` is `approximate`; the API rounds them before storage
 
 Success response: `201`
 

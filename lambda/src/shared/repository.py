@@ -46,7 +46,7 @@ def update_incident_status(incident_id: str, status: str) -> dict[str, Any]:
     now = utc_now()
     result = _table.update_item(
         Key=incident_key(incident_id),
-        UpdateExpression="SET #status = :status, GSI1PK = :gsi1pk, GSI1SK = :gsi1sk, updated_at = :updated_at, updates = if_not_exists(updates, :zero) + :one",
+        UpdateExpression="SET #status = :status, GSI1PK = :gsi1pk, GSI1SK = :gsi1sk, updated_at = :updated_at, updates = if_not_exists(updates, :zero) + :one, status_history = list_append(if_not_exists(status_history, :empty_history), :history_event)",
         ExpressionAttributeNames={"#status": "status"},
         ExpressionAttributeValues={
             ":status": status,
@@ -55,6 +55,8 @@ def update_incident_status(incident_id: str, status: str) -> dict[str, Any]:
             ":updated_at": now,
             ":zero": 0,
             ":one": 1,
+            ":empty_history": [],
+            ":history_event": [{"status": status, "at": now, "note": "Status updated"}],
         },
         ConditionExpression="attribute_exists(PK)",
         ReturnValues="ALL_NEW",

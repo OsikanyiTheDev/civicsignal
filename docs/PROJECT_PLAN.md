@@ -31,14 +31,30 @@
 - Next: Cognito groups for moderator, responder and administrator workflows
 - Next: verified status updates, audit events, image scanning and moderation dashboard
 
-## Stage 4 — Civic Readiness
+## Phase 1 — Public issue visibility
 
+- Public issue detail pages with shareable URLs
+- Status timeline backed by incident history
+- General-area / landmark visibility
+- Optional browser geolocation rounded to a public approximate pin before storage
+- General-area map link without public exact GPS coordinates
+
+## Phase 2 — Trust, moderation, and responders
+
+- Cognito groups for reporter, moderator, responder, and administrator
+- Private exact responder location with reporter consent
+- Moderator photo approval/rejection queue
+- Public approved image thumbnails and detail gallery
+- Internal responder notes and status workflow
+
+## Phase 3 — Community reliability
+
+- Duplicate-report matching
+- Follow issue / notification subscriptions
+- Aggregate community reliability dashboard
+- Low-data and offline draft experience
 - Stakeholder review with a community group or local organisation
-- Plain-language privacy notice
-- Accessibility review with real users
-- Data-retention and moderation policy
-- Incident escalation and emergency-service messaging review
-
+- Plain-language privacy notice, retention policy, and escalation guidance
 ## Success is not a download count
 
 CivicSignal should only be considered useful after it has a clear community owner, a safe moderation policy, a trustworthy status workflow, and an accountable response process.

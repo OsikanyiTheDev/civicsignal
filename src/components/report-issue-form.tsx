@@ -47,6 +47,9 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
   const [error, setError] = useState("");
   const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
   const [auth, setAuth] = useState<AuthState | null>(null);
+  const [approximateLocation, setApproximateLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [locationMessage, setLocationMessage] = useState("");
+  const [isLocating, setIsLocating] = useState(false);
   const isAwsConnected = Boolean(apiBaseUrl);
 
   useEffect(() => {
@@ -55,6 +58,33 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
       .then((data: AuthState) => setAuth(data))
       .catch(() => setAuth({ available: false, authenticated: false }));
   }, []);
+
+  function useApproximateLocation() {
+    if (!navigator.geolocation) {
+      setLocationMessage("Location is not available in this browser. You can still enter a general area or landmark.");
+      return;
+    }
+
+    setIsLocating(true);
+    setLocationMessage("");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // Round before the coordinates leave the browser. CivicSignal Phase 1
+        // shares only a general area pin, not raw GPS precision.
+        setApproximateLocation({
+          latitude: Number(position.coords.latitude.toFixed(2)),
+          longitude: Number(position.coords.longitude.toFixed(2)),
+        });
+        setLocationMessage("Approximate map pin added. Exact GPS precision is not shared publicly.");
+        setIsLocating(false);
+      },
+      () => {
+        setLocationMessage("Location permission was not granted. You can still report using the area or landmark field.");
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
+    );
+  }
 
   async function uploadPrivateEvidence(upload: PresignedPost, file: File) {
     const uploadBody = new FormData();
@@ -79,6 +109,15 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
     const area = String(form.get("area") || "").trim();
     const summary = String(form.get("summary") || "").trim();
     const urgency = String(form.get("urgency") || "Medium") as Incident["urgency"];
+    const reportPayload = {
+      title,
+      area,
+      summary,
+      category,
+      urgency,
+      location_precision: approximateLocation ? "approximate" : "area_only",
+      ...(approximateLocation || {}),
+    };
 
     setError("");
     setIsSending(true);
@@ -101,7 +140,7 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
         const response = await fetch("/api/reports/with-evidence", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ title, area, summary, category, urgency, evidence_content_type: evidenceFile.type }),
+          body: JSON.stringify({ ...reportPayload, evidence_content_type: evidenceFile.type }),
         });
         const data = await response.json() as EvidenceReportResponse | { message?: string };
         if (!response.ok || !("incident" in data) || !("evidence_upload" in data)) {
@@ -115,7 +154,7 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
         const response = await fetch(`${apiBaseUrl}/incidents`, {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ title, area, summary, category, urgency }),
+          body: JSON.stringify(reportPayload),
         });
         const data = await response.json() as CreateIncidentResponse | { message?: string };
         if (!response.ok || !("incident" in data)) {
@@ -136,12 +175,16 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
           urgency,
           emoji: categoryMeta[category].emoji,
           updates: 1,
+          location: approximateLocation ? { ...approximateLocation, precision: "approximate" } : undefined,
+          statusHistory: [{ status: "Submitted", at: new Date().toISOString(), note: "Report received" }],
         });
         setSubmittedWithPhoto(false);
       }
 
       formElement.reset();
       setEvidenceFile(null);
+      setApproximateLocation(null);
+      setLocationMessage("");
       setSubmitted(true);
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : "Unable to submit this report. Please try again.");
@@ -187,6 +230,15 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
           <span>Area or landmark</span>
           <input name="area" required minLength={2} maxLength={80} placeholder="For example: East Market" />
         </label>
+      </div>
+
+      <div className="location-control">
+        <div>
+          <span>Approximate map pin <small>Optional</small></span>
+          <p>Use your location to add a rounded general-area pin. Exact GPS precision is not shared publicly.</p>
+        </div>
+        <button type="button" className="location-button" onClick={useApproximateLocation} disabled={isLocating}>{isLocating ? "Finding location…" : approximateLocation ? "📍 Approximate pin added" : "📍 Use my approximate location"}</button>
+        {locationMessage ? <small className="location-message">{locationMessage} {approximateLocation ? <button type="button" onClick={() => { setApproximateLocation(null); setLocationMessage(""); }}>Remove pin</button> : null}</small> : null}
       </div>
 
       <label>

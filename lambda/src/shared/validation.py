@@ -6,6 +6,7 @@ from typing import Any
 CATEGORIES = {"Water", "Drainage", "Waste", "Streetlight", "Road safety", "Other"}
 URGENCY = {"Low", "Medium", "High"}
 STATUSES = {"Submitted", "Verified", "In progress", "Resolved"}
+LOCATION_PRECISIONS = {"area_only", "approximate"}
 CONTROL_CHARS = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
 
 
@@ -22,7 +23,32 @@ def clean_text(value: Any, field_name: str, minimum: int, maximum: int) -> str:
     return cleaned
 
 
-def validate_incident_payload(payload: dict[str, Any]) -> dict[str, str]:
+def validate_public_location(payload: dict[str, Any]) -> dict[str, Any]:
+    precision = payload.get("location_precision", "area_only")
+    if precision not in LOCATION_PRECISIONS:
+        raise ValidationError("location_precision is not supported")
+
+    latitude = payload.get("latitude")
+    longitude = payload.get("longitude")
+    if latitude is None and longitude is None:
+        return {"location_precision": "area_only"}
+    if precision != "approximate":
+        raise ValidationError("location_precision must be approximate when map coordinates are provided")
+    if isinstance(latitude, bool) or isinstance(longitude, bool) or not isinstance(latitude, (int, float)) or not isinstance(longitude, (int, float)):
+        raise ValidationError("latitude and longitude must be numbers")
+    if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
+        raise ValidationError("location coordinates are out of range")
+
+    # Round in the API before storage. This preserves a useful general-area pin
+    # while avoiding raw browser GPS precision in the public data model.
+    return {
+        "location_precision": "approximate",
+        "public_latitude": round(float(latitude), 2),
+        "public_longitude": round(float(longitude), 2),
+    }
+
+
+def validate_incident_payload(payload: dict[str, Any]) -> dict[str, Any]:
     category = payload.get("category")
     urgency = payload.get("urgency", "Medium")
     if category not in CATEGORIES:
@@ -36,6 +62,7 @@ def validate_incident_payload(payload: dict[str, Any]) -> dict[str, str]:
         "summary": clean_text(payload.get("summary"), "summary", 20, 600),
         "category": category,
         "urgency": urgency,
+        **validate_public_location(payload),
     }
 
 
