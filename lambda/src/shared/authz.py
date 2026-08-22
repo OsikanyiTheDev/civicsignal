@@ -25,7 +25,17 @@ def groups_from_event(event: dict[str, Any]) -> set[str]:
                 return {str(group) for group in decoded}
         except json.JSONDecodeError:
             pass
-        return {group.strip() for group in raw_groups.split(",") if group.strip()}
+
+        # API Gateway may serialize a Cognito list claim as [Moderator]
+        # rather than valid JSON ["Moderator"]. Normalize both formats.
+        normalized = raw_groups.strip()
+        if normalized.startswith("[") and normalized.endswith("]"):
+            normalized = normalized[1:-1]
+        return {
+            group.strip().strip('"').strip("'")
+            for group in normalized.split(",")
+            if group.strip().strip('"').strip("'")
+        }
     return set()
 
 

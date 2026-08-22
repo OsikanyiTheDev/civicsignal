@@ -68,7 +68,8 @@ export function claimGroups(token: string): string[] {
       const parsed = JSON.parse(groups);
       return Array.isArray(parsed) ? parsed : groups.split(",").map((group) => group.trim()).filter(Boolean);
     } catch {
-      return groups.split(",").map((group) => group.trim()).filter(Boolean);
+      const normalized = groups.trim().replace(/^\[/, "").replace(/\]$/, "");
+      return normalized.split(",").map((group) => group.trim().replace(/^['\"]|['\"]$/g, "")).filter(Boolean);
     }
   }
   return [];
