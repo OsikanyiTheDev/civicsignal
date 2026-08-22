@@ -115,7 +115,8 @@ Do not deploy until you have reviewed [docs/SECURITY.md](docs/SECURITY.md) and [
 ## Safety commitments
 
 - No patient, financial, or sensitive personal data in public incident reports
-- No precise home-address collection in the MVP
+- General-area reporting by default; exact public GPS requires an explicit reporter consent check
+- Do not submit a private home or sensitive location as an exact public pin
 - Private S3 evidence bucket in the infrastructure design
 - Moderation/status routes require AWS IAM in the current API design
 - Clear emergency-service limitation in the product interface

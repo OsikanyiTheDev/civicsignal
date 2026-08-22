@@ -23,8 +23,10 @@ Validation constraints:
 - `summary`: 20–600 characters
 - category: Water, Drainage, Waste, Streetlight, Road safety, or Other
 - urgency: Low, Medium, or High
-- optional `location_precision`: `area_only` or `approximate`
-- optional `latitude` and `longitude` only when `location_precision` is `approximate`; the API rounds them before storage
+- optional `location_precision`: `area_only`, `approximate`, or `exact_public`
+- optional `latitude` and `longitude` when a map pin is shared
+- `exact_location_public_consent: true` is required when `location_precision` is `exact_public`
+- exact public locations are rounded to six decimals; approximate locations use two decimals
 
 Success response: `201`
 

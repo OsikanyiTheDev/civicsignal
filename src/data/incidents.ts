@@ -21,7 +21,8 @@ export type StatusEvent = {
 export type PublicLocation = {
   latitude: number;
   longitude: number;
-  precision: "approximate";
+  precision: "approximate" | "exact_public";
+  accuracyMeters?: number;
 };
 
 export type Incident = {
@@ -61,7 +62,8 @@ export type ApiIncident = {
   updated_at?: string;
   public_latitude?: number | string;
   public_longitude?: number | string;
-  location_precision?: "approximate";
+  location_precision?: "approximate" | "exact_public";
+  location_accuracy_meters?: number | string;
   status_history?: StatusEvent[];
 };
 
@@ -79,7 +81,7 @@ export function incidentFromApi(incident: ApiIncident): Incident {
 
   const latitude = incident.public_latitude === undefined ? undefined : Number(incident.public_latitude);
   const longitude = incident.public_longitude === undefined ? undefined : Number(incident.public_longitude);
-  const hasApproximateLocation = typeof latitude === "number" && Number.isFinite(latitude) && typeof longitude === "number" && Number.isFinite(longitude) && incident.location_precision === "approximate";
+  const hasPublicLocation = typeof latitude === "number" && Number.isFinite(latitude) && typeof longitude === "number" && Number.isFinite(longitude) && (incident.location_precision === "approximate" || incident.location_precision === "exact_public");
 
   return {
     id: incident.id,
@@ -92,7 +94,12 @@ export function incidentFromApi(incident: ApiIncident): Incident {
     updates: Number(incident.updates ?? 1),
     emoji: categoryMeta[incident.category]?.emoji ?? "📍",
     reportedAt: `${formattedTime} · Community report`,
-    location: hasApproximateLocation ? { latitude: latitude as number, longitude: longitude as number, precision: "approximate" } : undefined,
+    location: hasPublicLocation ? {
+      latitude: latitude as number,
+      longitude: longitude as number,
+      precision: incident.location_precision as PublicLocation["precision"],
+      accuracyMeters: incident.location_accuracy_meters === undefined ? undefined : Number(incident.location_accuracy_meters),
+    } : undefined,
     statusHistory: incident.status_history,
   };
 }

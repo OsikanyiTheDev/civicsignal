@@ -87,10 +87,10 @@ export function IncidentDetail({ id }: IncidentDetailProps) {
 
           <section className="incident-location-card">
             <p className="signal-label"><MapPinned size={15} /> Location</p>
-            <h2>{incident.location ? "Approximate area reference" : "General area shared"}</h2>
+            <h2>{incident.location?.precision === "exact_public" ? "Exact reported location" : incident.location ? "Approximate area reference" : "General area shared"}</h2>
             <div className={`approximate-map ${incident.location ? "has-location" : ""}`}><span>📍</span><div className="map-grid" aria-hidden="true" /></div>
-            <p>{incident.location ? "This pin is rounded to a general area. CivicSignal does not show exact reporter GPS coordinates publicly." : `This report identifies ${incident.area}. An approximate map pin was not shared.`}</p>
-            {mapUrl ? <a className="text-action incident-map-link" href={mapUrl} target="_blank" rel="noreferrer">Open approximate area in Google Maps <ArrowUpRight size={15} /></a> : null}
+            <p>{incident.location?.precision === "exact_public" ? `The reporter chose to share this exact location publicly${incident.location.accuracyMeters ? ` (GPS accuracy about ${Math.round(incident.location.accuracyMeters)} metres)` : ""}.` : incident.location ? "This pin is rounded to a general area." : `This report identifies ${incident.area}. A map pin was not shared.`}</p>
+            {mapUrl ? <a className="text-action incident-map-link" href={mapUrl} target="_blank" rel="noreferrer">{incident.location?.precision === "exact_public" ? "Open exact location in Google Maps" : "Open approximate area in Google Maps"} <ArrowUpRight size={15} /></a> : null}
           </section>
 
           <section className="incident-evidence-card">

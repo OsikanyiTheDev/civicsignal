@@ -14,8 +14,9 @@ The MVP report collects only:
 - General area or landmark
 - Short title and description
 - Reporter-selected urgency
+- Optional browser GPS coordinates only after an explicit public-location consent check
 
-It intentionally does **not** collect names, phone numbers, financial information, medical information, or precise home addresses.
+It intentionally does **not** collect names, phone numbers, financial information, or medical information. Users must not submit a private home or sensitive location as an exact public pin.
 
 ## Public API controls
 

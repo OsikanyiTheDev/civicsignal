@@ -6,7 +6,7 @@ from typing import Any
 CATEGORIES = {"Water", "Drainage", "Waste", "Streetlight", "Road safety", "Other"}
 URGENCY = {"Low", "Medium", "High"}
 STATUSES = {"Submitted", "Verified", "In progress", "Resolved"}
-LOCATION_PRECISIONS = {"area_only", "approximate"}
+LOCATION_PRECISIONS = {"area_only", "approximate", "exact_public"}
 CONTROL_CHARS = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
 
 
@@ -32,15 +32,28 @@ def validate_public_location(payload: dict[str, Any]) -> dict[str, Any]:
     longitude = payload.get("longitude")
     if latitude is None and longitude is None:
         return {"location_precision": "area_only"}
-    if precision != "approximate":
-        raise ValidationError("location_precision must be approximate when map coordinates are provided")
+    if precision not in {"approximate", "exact_public"}:
+        raise ValidationError("a public map precision must be selected when coordinates are provided")
     if isinstance(latitude, bool) or isinstance(longitude, bool) or not isinstance(latitude, (int, float)) or not isinstance(longitude, (int, float)):
         raise ValidationError("latitude and longitude must be numbers")
     if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
         raise ValidationError("location coordinates are out of range")
 
-    # Round in the API before storage. This preserves a useful general-area pin
-    # while avoiding raw browser GPS precision in the public data model.
+    if precision == "exact_public":
+        if payload.get("exact_location_public_consent") is not True:
+            raise ValidationError("exact_location_public_consent is required before sharing an exact public location")
+        accuracy = payload.get("location_accuracy_meters")
+        if accuracy is not None and (isinstance(accuracy, bool) or not isinstance(accuracy, (int, float)) or accuracy < 0 or accuracy > 100000):
+            raise ValidationError("location_accuracy_meters is invalid")
+        return {
+            "location_precision": "exact_public",
+            # Six decimal places retains useful navigation accuracy while
+            # preventing needless full-precision browser GPS storage.
+            "public_latitude": round(float(latitude), 6),
+            "public_longitude": round(float(longitude), 6),
+            "location_accuracy_meters": round(float(accuracy), 1) if accuracy is not None else None,
+        }
+
     return {
         "location_precision": "approximate",
         "public_latitude": round(float(latitude), 2),

@@ -252,6 +252,8 @@ section[id] { scroll-margin-top: 84px; }
 .location-button { justify-self: start; padding: 6px 8px; border: 1px solid rgba(8,123,120,0.28); border-radius: 6px 3px 6px 3px; color: var(--teal); background: var(--surface); font-size: 0.63rem; font-weight: 760; cursor: pointer; }
 .location-button:hover { background: var(--teal-soft); }
 .location-button:disabled { opacity: 0.65; cursor: wait; }
+.location-consent { display: flex; padding: 8px; align-items: flex-start; gap: 7px; border: 1px solid rgba(217,97,53,0.25); border-radius: 6px; color: #82391f; background: var(--orange-soft); font-size: 0.61rem; line-height: 1.4; }
+.location-consent input { width: 14px; height: 14px; margin: 1px 0 0; accent-color: var(--teal); }
 .location-message { color: var(--ink-faint); font-size: 0.58rem; line-height: 1.35; }
 .location-message button { padding: 0; border: 0; color: var(--teal); background: none; font: inherit; font-weight: 760; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
 .evidence-control { display: grid; gap: 5px; margin-bottom: 11px; }

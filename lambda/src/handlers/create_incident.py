@@ -45,9 +45,11 @@ def lambda_handler(event: dict[str, Any], _context: Any) -> dict[str, Any]:
             {"status": "Submitted", "at": now, "note": "Report received"},
         ],
     }
-    if payload["location_precision"] == "approximate":
+    if payload["location_precision"] in {"approximate", "exact_public"}:
         incident["public_latitude"] = dynamodb_decimal(payload["public_latitude"])
         incident["public_longitude"] = dynamodb_decimal(payload["public_longitude"])
+        if payload.get("location_accuracy_meters") is not None:
+            incident["location_accuracy_meters"] = dynamodb_decimal(payload["location_accuracy_meters"])
 
     try:
         put_incident(incident)

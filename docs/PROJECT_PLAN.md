@@ -36,8 +36,8 @@
 - Public issue detail pages with shareable URLs
 - Status timeline backed by incident history
 - General-area / landmark visibility
-- Optional browser geolocation rounded to a public approximate pin before storage
-- General-area map link without public exact GPS coordinates
+- Optional browser GPS location with explicit consent before public exact-pin storage
+- Exact Google Maps link for publicly shared issue locations
 
 ## Phase 2 — Trust, moderation, and responders
 

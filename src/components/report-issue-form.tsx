@@ -47,7 +47,8 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
   const [error, setError] = useState("");
   const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
   const [auth, setAuth] = useState<AuthState | null>(null);
-  const [approximateLocation, setApproximateLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number; accuracyMeters?: number } | null>(null);
+  const [exactLocationPublicConsent, setExactLocationPublicConsent] = useState(false);
   const [locationMessage, setLocationMessage] = useState("");
   const [isLocating, setIsLocating] = useState(false);
   const isAwsConnected = Boolean(apiBaseUrl);
@@ -59,7 +60,7 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
       .catch(() => setAuth({ available: false, authenticated: false }));
   }, []);
 
-  function useApproximateLocation() {
+  function useExactLocation() {
     if (!navigator.geolocation) {
       setLocationMessage("Location is not available in this browser. You can still enter a general area or landmark.");
       return;
@@ -69,20 +70,19 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
     setLocationMessage("");
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        // Round before the coordinates leave the browser. CivicSignal Phase 1
-        // shares only a general area pin, not raw GPS precision.
-        setApproximateLocation({
-          latitude: Number(position.coords.latitude.toFixed(2)),
-          longitude: Number(position.coords.longitude.toFixed(2)),
+        setSelectedLocation({
+          latitude: Number(position.coords.latitude.toFixed(6)),
+          longitude: Number(position.coords.longitude.toFixed(6)),
+          accuracyMeters: Number(position.coords.accuracy.toFixed(1)),
         });
-        setLocationMessage("Approximate map pin added. Exact GPS precision is not shared publicly.");
+        setLocationMessage(`Exact public pin added. Reported GPS accuracy is about ${Math.round(position.coords.accuracy)} metres.`);
         setIsLocating(false);
       },
       () => {
         setLocationMessage("Location permission was not granted. You can still report using the area or landmark field.");
         setIsLocating(false);
       },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 },
     );
   }
 
@@ -115,11 +115,16 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
       summary,
       category,
       urgency,
-      location_precision: approximateLocation ? "approximate" : "area_only",
-      ...(approximateLocation || {}),
+      location_precision: selectedLocation ? "exact_public" : "area_only",
+      exact_location_public_consent: selectedLocation ? exactLocationPublicConsent : undefined,
+      ...(selectedLocation || {}),
     };
 
     setError("");
+    if (selectedLocation && !exactLocationPublicConsent) {
+      setError("Please confirm that the exact location pin may be visible publicly, or remove the location pin.");
+      return;
+    }
     setIsSending(true);
 
     try {
@@ -175,7 +180,7 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
           urgency,
           emoji: categoryMeta[category].emoji,
           updates: 1,
-          location: approximateLocation ? { ...approximateLocation, precision: "approximate" } : undefined,
+          location: selectedLocation ? { ...selectedLocation, precision: "exact_public" } : undefined,
           statusHistory: [{ status: "Submitted", at: new Date().toISOString(), note: "Report received" }],
         });
         setSubmittedWithPhoto(false);
@@ -183,7 +188,8 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
 
       formElement.reset();
       setEvidenceFile(null);
-      setApproximateLocation(null);
+      setSelectedLocation(null);
+      setExactLocationPublicConsent(false);
       setLocationMessage("");
       setSubmitted(true);
     } catch (submissionError) {
@@ -234,11 +240,12 @@ export function ReportIssueForm({ apiBaseUrl, onIncidentCreated }: ReportIssueFo
 
       <div className="location-control">
         <div>
-          <span>Approximate map pin <small>Optional</small></span>
-          <p>Use your location to add a rounded general-area pin. Exact GPS precision is not shared publicly.</p>
+          <span>Exact public location <small>Optional</small></span>
+          <p>Use your current GPS location to help people find the issue. This exact pin will be visible publicly in the issue detail page and Google Maps link.</p>
         </div>
-        <button type="button" className="location-button" onClick={useApproximateLocation} disabled={isLocating}>{isLocating ? "Finding location…" : approximateLocation ? "📍 Approximate pin added" : "📍 Use my approximate location"}</button>
-        {locationMessage ? <small className="location-message">{locationMessage} {approximateLocation ? <button type="button" onClick={() => { setApproximateLocation(null); setLocationMessage(""); }}>Remove pin</button> : null}</small> : null}
+        <button type="button" className="location-button" onClick={useExactLocation} disabled={isLocating}>{isLocating ? "Finding location…" : selectedLocation ? "📍 Exact pin added" : "📍 Use my current location"}</button>
+        {selectedLocation ? <label className="location-consent"><input type="checkbox" checked={exactLocationPublicConsent} onChange={(event) => setExactLocationPublicConsent(event.target.checked)} /> <span>I understand this exact location will be visible publicly.</span></label> : null}
+        {locationMessage ? <small className="location-message">{locationMessage} {selectedLocation ? <button type="button" onClick={() => { setSelectedLocation(null); setExactLocationPublicConsent(false); setLocationMessage(""); }}>Remove pin</button> : null}</small> : null}
       </div>
 
       <label>
