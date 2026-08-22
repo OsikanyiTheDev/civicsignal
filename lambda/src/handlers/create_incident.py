@@ -9,6 +9,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 from shared.http import parse_json_body, response
+from shared.numbers import dynamodb_decimal
 from shared.repository import public_incident, put_incident, utc_now
 from shared.validation import ValidationError, validate_incident_payload
 
@@ -45,8 +46,8 @@ def lambda_handler(event: dict[str, Any], _context: Any) -> dict[str, Any]:
         ],
     }
     if payload["location_precision"] == "approximate":
-        incident["public_latitude"] = payload["public_latitude"]
-        incident["public_longitude"] = payload["public_longitude"]
+        incident["public_latitude"] = dynamodb_decimal(payload["public_latitude"])
+        incident["public_longitude"] = dynamodb_decimal(payload["public_longitude"])
 
     try:
         put_incident(incident)

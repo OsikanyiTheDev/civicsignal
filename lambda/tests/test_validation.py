@@ -7,6 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from decimal import Decimal
 
 from shared.http import response
+from shared.numbers import dynamodb_decimal
 from shared.validation import ValidationError, validate_incident_payload, validate_status
 
 
@@ -85,6 +86,9 @@ class IncidentValidationTests(unittest.TestCase):
     def test_serializes_dynamodb_numbers_as_json_numbers(self):
         result = response(200, {"updates": Decimal("1")})
         self.assertEqual(result["body"], '{"updates": 1}')
+
+    def test_converts_browser_location_float_to_dynamodb_decimal(self):
+        self.assertEqual(dynamodb_decimal(5.6), Decimal("5.6"))
 
 
 if __name__ == "__main__":
